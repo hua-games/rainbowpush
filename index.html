@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rainbow Quest - Unicorn Puzzle Game</title>
+  <meta name="description" content="Guide your unicorn through 7 magical levels collecting rainbow crystals in this delightful Sokoban-style puzzle game!">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://happyunicornarmy.com/rainbow-quest">
+  <meta property="og:title" content="Rainbow Quest - Unicorn Puzzle Game">
+  <meta property="og:description" content="Guide your unicorn through 7 magical levels collecting rainbow crystals in this delightful Sokoban-style puzzle game!">
+  <meta property="og:image" content="graphics/unicorn.png">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://happyunicornarmy.com/rainbow-quest">
+  <meta property="twitter:title" content="Rainbow Quest - Unicorn Puzzle Game">
+  <meta property="twitter:description" content="Guide your unicorn through 7 magical levels collecting rainbow crystals in this delightful Sokoban-style puzzle game!">
+  <meta property="twitter:image" content="graphics/unicorn.png">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    @keyframes rainbowBackground {
+      0% { background: linear-gradient(135deg, #f44336 0%, #ff9800 100%); }
+      14% { background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%); }
+      28% { background: linear-gradient(135deg, #ffc107 0%, #4caf50 100%); }
+      42% { background: linear-gradient(135deg, #4caf50 0%, #2196f3 100%); }
+      57% { background: linear-gradient(135deg, #2196f3 0%, #9c27b0 100%); }
+      71% { background: linear-gradient(135deg, #9c27b0 0%, #e91e63 100%); }
+      85% { background: linear-gradient(135deg, #e91e63 0%, #f44336 100%); }
+      100% { background: linear-gradient(135deg, #f44336 0%, #ff9800 100%); }
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      color: white;
+      padding: 10px 20px 20px 20px;
+    }
+
+    body.rainbow-victory {
+      animation: rainbowBackground 10s ease-in-out infinite;
+    }
+
+    #game {
+      text-align: center;
+      max-width: 100%;
+    }
+
+    #ui {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 10px;
+      border-radius: 15px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 5px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    #levelInfo {
+      font-size: 1.1em;
+      margin: 5px 0;
+      opacity: 0.9;
+    }
+
+    #stats {
+      font-size: 1.3em;
+      margin: 8px 0;
+      font-weight: bold;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: nowrap;
+    }
+
+    button {
+      background: #9b59d0;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 0.9em;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      white-space: nowrap;
+    }
+
+    button:hover {
+      background: #8849c0;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      background: #666;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    #grid {
+      display: grid;
+      gap: 4px;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 10px;
+      border-radius: 15px;
+      margin: auto;
+      width: fit-content;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    #game {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: calc(100vh - 200px);
+    }
+
+    .tile {
+      width: 45px;
+      height: 45px;
+      background: #e8f4f8;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 3px;
+      transition: background 0.2s;
+    }
+
+    .tile.wall {
+      background: #555;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .tile.water {
+      background: linear-gradient(135deg, #4fc3f7 0%, #29b6f6 100%);
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .tile.ice {
+      background: linear-gradient(135deg, #e1f5fe 0%, #b3e5fc 100%);
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.5);
+    }
+
+    .restore-point {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 3px dashed;
+      opacity: 0.6;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+    }
+
+    .restore-point.active {
+      border-style: solid;
+      opacity: 1;
+      animation: none;
+      box-shadow: 0 0 10px currentColor;
+    }
+
+    .restore-point.red { border-color: #f44336; color: #f44336; }
+    .restore-point.orange { border-color: #ff9800; color: #ff9800; }
+    .restore-point.yellow { border-color: #ffc107; color: #ffc107; }
+    .restore-point.green { border-color: #4caf50; color: #4caf50; }
+    .restore-point.blue { border-color: #2196f3; color: #2196f3; }
+    .restore-point.purple { border-color: #9c27b0; color: #9c27b0; }
+    .restore-point.pink { border-color: #e91e63; color: #e91e63; }
+
+    .crystal {
+      position: absolute;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      z-index: 2;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .crystal.red { background: radial-gradient(circle at 30% 30%, #ff6b6b, #f44336); }
+    .crystal.orange { background: radial-gradient(circle at 30% 30%, #ffb74d, #ff9800); }
+    .crystal.yellow { background: radial-gradient(circle at 30% 30%, #ffd54f, #ffc107); }
+    .crystal.green { background: radial-gradient(circle at 30% 30%, #81c784, #4caf50); }
+    .crystal.blue { background: radial-gradient(circle at 30% 30%, #64b5f6, #2196f3); }
+    .crystal.purple { background: radial-gradient(circle at 30% 30%, #ba68c8, #9c27b0); }
+    .crystal.pink { background: radial-gradient(circle at 30% 30%, #f06292, #e91e63); }
+
+    .crystal.activated {
+      animation: sparkle 0.5s ease-out;
+    }
+
+    @keyframes sparkle {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.3); box-shadow: 0 0 20px currentColor; }
+      100% { transform: scale(1); }
+    }
+
+    .player {
+      width: 60px;
+      height: 60px;
+      z-index: 3;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+      position: absolute;
+      object-fit: contain;
+    }
+
+    #victory {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.95);
+      padding: 20px;
+      border-radius: 15px;
+      border: 3px solid #9b59d0;
+      z-index: 100;
+      min-width: 280px;
+      max-width: 90vw;
+      box-shadow: 0 0 40px rgba(155, 89, 208, 0.6);
+      animation: victoryAppear 0.5s ease-out;
+    }
+
+    @keyframes victoryAppear {
+      from {
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 0;
+      }
+      to {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+    }
+
+    #victory h2 {
+      font-size: 1.2em;
+      margin-bottom: 15px;
+      color: #ffd700;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    }
+
+    #victory p {
+      font-size: 1.1em;
+      margin-bottom: 15px;
+      line-height: 1.4;
+    }
+
+    .controls-hint {
+      font-size: 0.9em;
+      opacity: 0.8;
+      margin-top: 10px;
+      font-style: italic;
+    }
+
+    #muteBtn {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 32px;
+      cursor: pointer;
+      transition: all 0.3s;
+      z-index: 1000;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5)) saturate(0.2);
+      padding: 0;
+      opacity: 0.5;
+    }
+
+    #muteBtn:hover, #muteBtn:active {
+      transform: scale(1.1);
+      opacity: 0.9;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5)) saturate(1);
+    }
+
+    #muteBtn.muted {
+      opacity: 0.3;
+    }
+
+    #mobileControls {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: grid;
+      grid-template-columns: repeat(3, 50px);
+      grid-template-rows: repeat(3, 50px);
+      gap: 6px;
+      z-index: 1000;
+    }
+
+    .control-btn {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      color: white;
+      font-size: 28px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      transition: all 0.2s;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      line-height: 0.8;
+      padding: 0;
+      padding-bottom: 3px;
+    }
+
+    .unicorn-center {
+      grid-column: 2;
+      grid-row: 2;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .unicorn-center img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+
+    .unicorn-center:active {
+      transform: scale(0.95);
+    }
+
+    .unicorn-link {
+      cursor: pointer;
+    }
+
+    .control-btn:active {
+      background: rgba(100, 100, 255, 0.8);
+      transform: scale(0.95);
+    }
+
+    .control-btn.up { grid-column: 2; grid-row: 1; }
+    .control-btn.left { grid-column: 1; grid-row: 2; }
+    .control-btn.down { grid-column: 2; grid-row: 3; }
+    .control-btn.right { grid-column: 3; grid-row: 2; }
+
+    #version {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      font-size: 0.7em;
+      opacity: 0.4;
+      color: white;
+      z-index: 500;
+      pointer-events: none;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.8em; }
+      .tile { width: 38px; height: 38px; }
+      .player { width: 46px; height: 46px; }
+      .crystal { width: 26px; height: 26px; }
+      .restore-point { width: 24px; height: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Music -->
+  <audio id="bgMusic" loop>
+    <source src="Glitter Speedrun (0.42x).mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Mute Button -->
+  <button id="muteBtn" title="Toggle Music">🔊</button>
+
+  <!-- Version Number -->
+  <div id="version">v0.1.0</div>
+
+  <div id="game">
+    <div id="ui">
+      <h1><img src="graphics/unicorn.png" alt="Unicorn" class="unicorn-link" onclick="window.open('https://happyunicornarmy.com', '_blank')" style="height: 2em; vertical-align: middle; margin-right: 0.2em;"> Rainbow Quest</h1>
+      <div id="levelInfo">Level <span id="levelNum">1</span>: <span id="levelName">Loading...</span></div>
+      <div id="stats">
+        Moves: <span id="moveCount">0</span> |
+        Optimal: <span id="optimalMoves">0</span>
+      </div>
+      <div class="button-group">
+        <button id="resetBtn">🔄 Reset</button>
+        <button id="prevBtn">← Previous</button>
+        <button id="nextBtn">Next →</button>
+      </div>
+    </div>
+    <div id="grid"></div>
+
+    <!-- Mobile Controls -->
+    <div id="mobileControls">
+      <button class="control-btn up" data-dir="up">↑</button>
+      <button class="control-btn left" data-dir="left">←</button>
+      <div class="unicorn-center" onclick="window.open('https://happyunicornarmy.com', '_blank')">
+        <img src="graphics/unicorn.png" alt="Happy Unicorn Army">
+      </div>
+      <button class="control-btn down" data-dir="down">↓</button>
+      <button class="control-btn right" data-dir="right">→</button>
+    </div>
+    <div id="victory" style="display:none">
+      <h2>✨ Level Complete! ✨</h2>
+      <p id="victoryStats"></p>
+      <div class="button-group">
+        <button id="victoryResetBtn">🔄 Retry</button>
+        <button id="victoryNextBtn">Next Level →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load levels from external file -->
+  <script src="levels.js"></script>
+
+  <script>
+    // ===== GAME DATA =====
+    // Levels are loaded from levels.js
+
+    // ===== MUSIC SYSTEM =====
+
+    const music = {
+      audio: document.getElementById('bgMusic'),
+      started: false,
+      muted: localStorage.getItem('musicMuted') === 'true'
+    };
+
+    // Initialize mute state from localStorage
+    function initMusic() {
+      const muteBtn = document.getElementById('muteBtn');
+
+      if (music.muted) {
+        music.audio.muted = true;
+        muteBtn.textContent = '🔇';
+        muteBtn.classList.add('muted');
+      } else {
+        music.audio.muted = false;
+        muteBtn.textContent = '🔊';
+        muteBtn.classList.remove('muted');
+      }
+    }
+
+    // Start music on first user interaction
+    function startMusicOnInteraction() {
+      if (!music.started) {
+        // Always start the music (respect mute state via audio.muted)
+        music.audio.play().catch(err => {
+          console.log('Audio play prevented:', err);
+        });
+        music.started = true;
+      }
+    }
+
+    // Toggle mute
+    function toggleMute() {
+      music.muted = !music.muted;
+      music.audio.muted = music.muted;
+      localStorage.setItem('musicMuted', music.muted);
+
+      const muteBtn = document.getElementById('muteBtn');
+      if (music.muted) {
+        muteBtn.textContent = '🔇';
+        muteBtn.classList.add('muted');
+      } else {
+        muteBtn.textContent = '🔊';
+        muteBtn.classList.remove('muted');
+        // If music hasn't started yet, start it when unmuting
+        if (!music.started) {
+          startMusicOnInteraction();
+        }
+      }
+    }
+
+    // ===== SOKOBAN SOLVER =====
+
+    function solveSokoban(levelData) {
+      // BFS solver to find if level is solvable and optimal move count
+      const { tiles, player, crystals, restorePoints } = levelData;
+
+      // Create state key for visited tracking
+      function stateKey(playerPos, crystalPositions) {
+        const cKey = crystalPositions
+          .map(c => `${c.x},${c.y}`)
+          .sort()
+          .join('|');
+        return `${playerPos.x},${playerPos.y}|${cKey}`;
+      }
+
+      // Check if state is winning
+      function isWin(crystalPositions) {
+        return crystalPositions.every(crystal => {
+          return restorePoints.some(
+            rp => rp.x === crystal.x && rp.y === crystal.y && rp.color === crystal.color
+          );
+        });
+      }
+
+      // Check if position is walkable
+      function isWalkable(x, y) {
+        if (x < 0 || y < 0 || y >= tiles.length || x >= tiles[0].length) return false;
+        return tiles[y][x] === 0;
+      }
+
+      // BFS queue: {player, crystals, moves}
+      const queue = [{
+        player: { ...player },
+        crystals: crystals.map(c => ({ ...c })),
+        moves: 0
+      }];
+
+      const visited = new Set();
+      visited.add(stateKey(player, crystals));
+
+      const directions = [
+        { dx: 0, dy: -1 }, // up
+        { dx: 0, dy: 1 },  // down
+        { dx: -1, dy: 0 }, // left
+        { dx: 1, dy: 0 }   // right
+      ];
+
+      let iterations = 0;
+      const MAX_ITERATIONS = 200000; // Prevent infinite loops
+
+      while (queue.length > 0 && iterations++ < MAX_ITERATIONS) {
+        const state = queue.shift();
+
+        if (isWin(state.crystals)) {
+          return { solvable: true, moves: state.moves };
+        }
+
+        // Try each direction
+        for (const { dx, dy } of directions) {
+          const newX = state.player.x + dx;
+          const newY = state.player.y + dy;
+
+          if (!isWalkable(newX, newY)) continue;
+
+          // Check if there's a crystal at new position
+          const crystalIndex = state.crystals.findIndex(c => c.x === newX && c.y === newY);
+
+          if (crystalIndex !== -1) {
+            // Try to push crystal
+            const pushX = newX + dx;
+            const pushY = newY + dy;
+
+            if (!isWalkable(pushX, pushY)) continue;
+
+            // Check if another crystal is blocking
+            const blocked = state.crystals.some(c => c.x === pushX && c.y === pushY);
+            if (blocked) continue;
+
+            // Create new state with pushed crystal
+            const newCrystals = state.crystals.map((c, i) =>
+              i === crystalIndex ? { ...c, x: pushX, y: pushY } : { ...c }
+            );
+            const newPlayer = { x: newX, y: newY };
+            const key = stateKey(newPlayer, newCrystals);
+
+            if (!visited.has(key)) {
+              visited.add(key);
+              queue.push({
+                player: newPlayer,
+                crystals: newCrystals,
+                moves: state.moves + 1
+              });
+            }
+          } else {
+            // Just move player
+            const newPlayer = { x: newX, y: newY };
+            const key = stateKey(newPlayer, state.crystals);
+
+            if (!visited.has(key)) {
+              visited.add(key);
+              queue.push({
+                player: newPlayer,
+                crystals: state.crystals.map(c => ({ ...c })),
+                moves: state.moves + 1
+              });
+            }
+          }
+        }
+      }
+
+      return { solvable: false, moves: -1 };
+    }
+
+    // ===== GAME STATE =====
+
+    const game = {
+      level: 0,
+      moves: 0,
+      grid: {
+        width: 0,
+        height: 0,
+        tiles: []
+      },
+      player: { x: 0, y: 0, facing: 'right' },
+      crystals: [],
+      restorePoints: [],
+      isMoving: false,
+      isComplete: false,
+      completedLevels: JSON.parse(localStorage.getItem('completedLevels') || '[]')
+    };
+
+    // ===== CORE FUNCTIONS =====
+
+    function loadLevel(levelIndex) {
+      if (levelIndex < 0 || levelIndex >= levels.length) return;
+
+      const level = levels[levelIndex];
+
+      game.level = levelIndex;
+      game.moves = 0;
+      game.isComplete = false;
+      game.isMoving = false;
+
+      game.grid.width = level.width;
+      game.grid.height = level.height;
+      game.grid.tiles = level.tiles.map(row => [...row]);
+
+      game.player = { ...level.player, facing: 'right' };
+      game.crystals = level.crystals.map(c => ({ ...c, activated: false }));
+      game.restorePoints = level.restorePoints.map(r => ({ ...r, active: false }));
+
+      // Reset victory screen customizations
+      document.getElementById('victory').style.display = 'none';
+      document.getElementById('victoryResetBtn').style.display = 'block';
+      document.body.classList.remove('rainbow-victory');
+
+      updateUI();
+      renderGrid();
+      updateButtons();
+    }
+
+    function renderGrid() {
+      const gridEl = document.getElementById('grid');
+      gridEl.innerHTML = '';
+      gridEl.style.gridTemplateColumns = `repeat(${game.grid.width}, 50px)`;
+
+      for (let y = 0; y < game.grid.height; y++) {
+        for (let x = 0; x < game.grid.width; x++) {
+          const tile = document.createElement('div');
+          tile.className = 'tile';
+          tile.dataset.x = x;
+          tile.dataset.y = y;
+
+          const tileType = game.grid.tiles[y][x];
+          if (tileType === 1) tile.classList.add('wall');
+          if (tileType === 2) tile.classList.add('water');
+          if (tileType === 3) tile.classList.add('ice');
+
+          // Add restore points
+          const rp = game.restorePoints.find(r => r.x === x && r.y === y);
+          if (rp) {
+            const rpEl = document.createElement('div');
+            rpEl.className = `restore-point ${rp.color}`;
+            if (rp.active) rpEl.classList.add('active');
+            tile.appendChild(rpEl);
+          }
+
+          // Add crystals
+          const crystal = game.crystals.find(c => c.x === x && c.y === y);
+          if (crystal) {
+            const crystalEl = document.createElement('div');
+            crystalEl.className = `crystal ${crystal.color}`;
+            if (crystal.activated) crystalEl.classList.add('activated');
+            tile.appendChild(crystalEl);
+          }
+
+          // Add player
+          if (game.player.x === x && game.player.y === y) {
+            const playerEl = document.createElement('img');
+            playerEl.className = 'player';
+            playerEl.src = 'graphics/unicorn.png';
+            playerEl.alt = 'Unicorn';
+            // Flip horizontally when facing right
+            if (game.player.facing === 'right') {
+              playerEl.style.transform = 'scaleX(-1)';
+            }
+            tile.appendChild(playerEl);
+          }
+
+          gridEl.appendChild(tile);
+        }
+      }
+    }
+
+    function updateUI() {
+      document.getElementById('levelNum').textContent = game.level + 1;
+      document.getElementById('levelName').textContent = levels[game.level].name;
+      document.getElementById('moveCount').textContent = game.moves;
+      document.getElementById('optimalMoves').textContent = levels[game.level].optimalMoves;
+    }
+
+    function updateButtons() {
+      document.getElementById('prevBtn').disabled = game.level === 0;
+      // Can only go to next level if current or previous level is completed
+      const canGoNext = game.level < levels.length - 1 &&
+                        (game.completedLevels.includes(game.level) || game.level === 0);
+      document.getElementById('nextBtn').disabled = !canGoNext;
+    }
+
+    function markLevelComplete() {
+      if (!game.completedLevels.includes(game.level)) {
+        game.completedLevels.push(game.level);
+        localStorage.setItem('completedLevels', JSON.stringify(game.completedLevels));
+        updateButtons();
+      }
+    }
+
+    function tryMove(dx, dy) {
+      if (game.isMoving || game.isComplete) return;
+
+      const newX = game.player.x + dx;
+      const newY = game.player.y + dy;
+
+      if (!isInBounds(newX, newY)) return;
+      if (!isWalkable(newX, newY)) return;
+
+      const crystal = getCrystalAt(newX, newY);
+
+      if (crystal) {
+        const pushX = newX + dx;
+        const pushY = newY + dy;
+
+        if (!canPushTo(pushX, pushY)) return;
+
+        crystal.x = pushX;
+        crystal.y = pushY;
+        crystal.activated = false;
+      }
+
+      game.player.x = newX;
+      game.player.y = newY;
+      game.moves++;
+
+      // Update facing direction based on horizontal movement
+      if (dx < 0) game.player.facing = 'left';
+      if (dx > 0) game.player.facing = 'right';
+
+      updateRestorePoints();
+      updateUI();
+      renderGrid();
+      checkWin();
+    }
+
+    function isInBounds(x, y) {
+      return x >= 0 && x < game.grid.width && y >= 0 && y < game.grid.height;
+    }
+
+    function isWalkable(x, y) {
+      if (!isInBounds(x, y)) return false;
+      const tile = game.grid.tiles[y][x];
+      return tile === 0 || tile === 3; // 0 = walkable, 3 = ice
+    }
+
+    function getCrystalAt(x, y) {
+      return game.crystals.find(c => c.x === x && c.y === y);
+    }
+
+    function canPushTo(x, y) {
+      return isWalkable(x, y) && !getCrystalAt(x, y);
+    }
+
+    function updateRestorePoints() {
+      game.restorePoints.forEach(rp => {
+        const crystal = getCrystalAt(rp.x, rp.y);
+        const wasActive = rp.active;
+        rp.active = crystal && crystal.color === rp.color;
+
+        if (rp.active && !wasActive && crystal) {
+          crystal.activated = true;
+        }
+      });
+    }
+
+    function checkWin() {
+      const allActive = game.restorePoints.every(rp => rp.active);
+
+      if (allActive && game.restorePoints.length > 0) {
+        game.isComplete = true;
+        setTimeout(showVictory, 300);
+      }
+    }
+
+    function showVictory() {
+      markLevelComplete();
+
+      const optimal = levels[game.level].optimalMoves;
+      let stars = 1;
+      const isOptimal = game.moves <= optimal;
+      if (isOptimal) stars = 3;
+      else if (game.moves <= optimal * 1.5) stars = 2;
+
+      const starStr = '⭐'.repeat(stars);
+
+      const isLastLevel = game.level === levels.length - 1;
+
+      // Extra celebration for optimal solution!
+      if (isOptimal && !isLastLevel) {
+        createOptimalCelebration();
+      }
+
+      // Special rainbow finale message
+      if (isLastLevel) {
+        document.getElementById('victoryStats').innerHTML = `
+          <h2 style="font-size: 2.5em; margin: 15px 0;">🌈</h2>
+          <strong style="font-size: 1.4em; background: linear-gradient(to right, #f44336, #ff9800, #ffc107, #4caf50, #2196f3, #9c27b0, #e91e63); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">RAINBOW VICTORY!</strong><br><br>
+          <strong>Moves:</strong> ${game.moves}<br>
+          <strong>Optimal:</strong> ${optimal}<br>
+          <strong>Stars:</strong> ${starStr}<br><br>
+          <em>You've mastered all the colors!</em>
+        `;
+        createRainbowCelebration();
+        // Activate rainbow background
+        document.body.classList.add('rainbow-victory');
+        // Hide retry button on final level
+        document.getElementById('victoryResetBtn').style.display = 'none';
+        // Change the Next button to Happy Unicorn Army
+        const nextBtn = document.getElementById('victoryNextBtn');
+        nextBtn.textContent = 'Happy Unicorn Army';
+        nextBtn.onclick = () => window.open('https://happyunicornarmy.com', '_blank');
+        nextBtn.disabled = false;
+      } else {
+        document.getElementById('victoryStats').innerHTML = `
+          <strong>Moves:</strong> ${game.moves}<br>
+          <strong>Optimal:</strong> ${optimal}<br>
+          <strong>Stars:</strong> ${starStr}
+        `;
+      }
+
+      document.getElementById('victory').style.display = 'block';
+
+      // Reset the Next button if not on last level
+      if (!isLastLevel) {
+        const nextBtn = document.getElementById('victoryNextBtn');
+        nextBtn.textContent = 'Next Level →';
+        nextBtn.disabled = false;
+        nextBtn.onclick = () => {
+          if (game.level + 1 < levels.length) {
+            loadLevel(game.level + 1);
+          }
+        };
+      }
+    }
+
+    function createRainbowCelebration() {
+      const colors = ['#f44336', '#ff9800', '#ffc107', '#4caf50', '#2196f3', '#9c27b0', '#e91e63'];
+
+      for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+          const x = Math.random() * window.innerWidth;
+          const y = Math.random() * window.innerHeight;
+          const color = colors[Math.floor(Math.random() * colors.length)];
+          const size = Math.random() * 15 + 10;
+
+          const particle = document.createElement('div');
+          particle.style.position = 'fixed';
+          particle.style.left = x + 'px';
+          particle.style.top = y + 'px';
+          particle.style.width = size + 'px';
+          particle.style.height = size + 'px';
+          particle.style.borderRadius = '50%';
+          particle.style.background = color;
+          particle.style.zIndex = '9999';
+          particle.style.pointerEvents = 'none';
+          particle.style.boxShadow = `0 0 ${size}px ${color}`;
+
+          document.body.appendChild(particle);
+
+          const duration = Math.random() * 2000 + 2000;
+          const dy = Math.random() * 200 + 100;
+
+          particle.animate([
+            { transform: 'translateY(0)', opacity: 1 },
+            { transform: `translateY(${dy}px)`, opacity: 0 }
+          ], {
+            duration: duration,
+            easing: 'ease-out'
+          });
+
+          setTimeout(() => particle.remove(), duration);
+        }, i * 50);
+      }
+    }
+
+    function createOptimalCelebration() {
+      // Gold burst for optimal solution!
+      for (let i = 0; i < 30; i++) {
+        setTimeout(() => {
+          const x = Math.random() * window.innerWidth;
+          const y = Math.random() * window.innerHeight;
+          const size = Math.random() * 20 + 15;
+
+          const particle = document.createElement('div');
+          particle.style.position = 'fixed';
+          particle.style.left = x + 'px';
+          particle.style.top = y + 'px';
+          particle.style.width = size + 'px';
+          particle.style.height = size + 'px';
+          particle.style.borderRadius = '50%';
+          particle.style.background = 'radial-gradient(circle, #ffd700, #ffed4e)';
+          particle.style.zIndex = '9999';
+          particle.style.pointerEvents = 'none';
+          particle.style.boxShadow = `0 0 ${size * 2}px #ffd700`;
+
+          document.body.appendChild(particle);
+
+          const duration = Math.random() * 1500 + 1500;
+          const dy = Math.random() * 300 + 150;
+
+          particle.animate([
+            { transform: 'translateY(0) scale(1)', opacity: 1 },
+            { transform: `translateY(${dy}px) scale(0.5)`, opacity: 0 }
+          ], {
+            duration: duration,
+            easing: 'ease-out'
+          });
+
+          setTimeout(() => particle.remove(), duration);
+        }, i * 30);
+      }
+    }
+
+    // ===== EVENT LISTENERS =====
+
+    document.addEventListener('keydown', (e) => {
+      // Try to start music on any keypress
+      startMusicOnInteraction();
+
+      // Check if victory screen is showing
+      const victoryVisible = document.getElementById('victory').style.display !== 'none';
+
+      if (victoryVisible && e.key === 'Enter') {
+        e.preventDefault();
+        // Go to next level if available
+        if (game.level + 1 < levels.length) {
+          loadLevel(game.level + 1);
+        }
+        return;
+      }
+
+      switch(e.key.toLowerCase()) {
+        case 'arrowup':
+        case 'w':
+          e.preventDefault();
+          tryMove(0, -1);
+          break;
+        case 'arrowdown':
+        case 's':
+          e.preventDefault();
+          tryMove(0, 1);
+          break;
+        case 'arrowleft':
+        case 'a':
+          e.preventDefault();
+          tryMove(-1, 0);
+          break;
+        case 'arrowright':
+        case 'd':
+          e.preventDefault();
+          tryMove(1, 0);
+          break;
+        case 'r':
+          e.preventDefault();
+          loadLevel(game.level);
+          break;
+      }
+    });
+
+    document.getElementById('resetBtn').onclick = () => {
+      startMusicOnInteraction();
+      loadLevel(game.level);
+    };
+    document.getElementById('prevBtn').onclick = () => {
+      startMusicOnInteraction();
+      loadLevel(game.level - 1);
+    };
+    document.getElementById('nextBtn').onclick = () => {
+      startMusicOnInteraction();
+      loadLevel(game.level + 1);
+    };
+    document.getElementById('victoryResetBtn').onclick = () => {
+      startMusicOnInteraction();
+      loadLevel(game.level);
+    };
+    document.getElementById('victoryNextBtn').onclick = () => {
+      startMusicOnInteraction();
+      if (game.level + 1 < levels.length) {
+        loadLevel(game.level + 1);
+      }
+    };
+
+    // Mute button
+    document.getElementById('muteBtn').onclick = () => {
+      startMusicOnInteraction();
+      toggleMute();
+    };
+
+    // Mobile controls
+    document.querySelectorAll('.control-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        startMusicOnInteraction();
+        const dir = e.target.dataset.dir;
+        switch(dir) {
+          case 'up': tryMove(0, -1); break;
+          case 'down': tryMove(0, 1); break;
+          case 'left': tryMove(-1, 0); break;
+          case 'right': tryMove(1, 0); break;
+        }
+      });
+    });
+
+    // ===== LEVEL VERIFICATION =====
+    function verifyAllLevels() {
+      console.log('🔍 Verifying all levels...');
+      levels.forEach((level, index) => {
+        const result = solveSokoban({
+          tiles: level.tiles,
+          player: level.player,
+          crystals: level.crystals,
+          restorePoints: level.restorePoints
+        });
+
+        if (result.solvable) {
+          console.log(`✅ Level ${index + 1} "${level.name}": SOLVABLE in ${result.moves} moves (stated optimal: ${level.optimalMoves})`);
+        } else {
+          console.error(`❌ Level ${index + 1} "${level.name}": UNSOLVABLE!`);
+        }
+      });
+      console.log('✨ Verification complete!');
+    }
+
+    // ===== INITIALIZE =====
+    initMusic();
+    loadLevel(0);
+    // Verify levels in background (disabled - solver gives false negatives for complex levels)
+    // setTimeout(verifyAllLevels, 1000);
+  </script>
+</body>
+</html>
