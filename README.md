@@ -1,4 +1,4 @@
-# Rainbow Unicorn Sokoban 🦄 
+# Unicorn Rainbow Sokoban 🦄 
 
 ## A Game By Happy Unicorn Army
 

@@ -306,6 +306,67 @@
       opacity: 0.3;
     }
 
+    #volumePopup {
+      position: fixed;
+      bottom: 55px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      padding: 15px;
+      z-index: 1001;
+      display: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    #volumePopup.show {
+      display: block;
+      animation: popupAppear 0.2s ease-out;
+    }
+
+    @keyframes popupAppear {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    #volumePopup label {
+      display: block;
+      font-size: 0.9em;
+      margin-bottom: 8px;
+      color: white;
+      text-align: center;
+    }
+
+    #volumeSlider {
+      width: 120px;
+      height: 6px;
+      -webkit-appearance: none;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 3px;
+      outline: none;
+    }
+
+    #volumeSlider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      background: #9b59d0;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    #volumeSlider::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      background: #9b59d0;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
     #mobileControls {
       position: fixed;
       bottom: 20px;
@@ -396,19 +457,25 @@
 </head>
 <body>
   <!-- Background Music -->
-  <audio id="bgMusic" loop>
-    <source src="Glitter Speedrun (0.42x).mp3" type="audio/mpeg">
+  <audio id="bgMusic" loop preload="auto">
+    <source src="Glitter%20Speedrun%20(0.42x).mp3" type="audio/mpeg">
   </audio>
 
   <!-- Mute Button -->
-  <button id="muteBtn" title="Toggle Music">🔊</button>
+  <button id="muteBtn" title="Toggle Music (right-click for volume)">🔊</button>
+
+  <!-- Volume Popup -->
+  <div id="volumePopup">
+    <label>Volume: <span id="volumeValue">50</span>%</label>
+    <input type="range" id="volumeSlider" min="0" max="100" value="50">
+  </div>
 
   <!-- Version Number -->
-  <div id="version">v0.1.0</div>
+  <div id="version">v0.1.1</div>
 
   <div id="game">
     <div id="ui">
-      <h1><img src="graphics/unicorn.png" alt="Unicorn" class="unicorn-link" onclick="window.open('https://happyunicornarmy.com', '_blank')" style="height: 2em; vertical-align: middle; margin-right: 0.2em;"> Rainbow Quest</h1>
+      <h1><img src="graphics/unicorn.png" alt="Unicorn" class="unicorn-link" onclick="window.open('https://happyunicornarmy.com', '_blank')" style="height: 2em; vertical-align: middle; margin-right: 0.2em;"> Rainbow Sokoban </h1>
       <div id="levelInfo">Level <span id="levelNum">1</span>: <span id="levelName">Loading...</span></div>
       <div id="stats">
         Moves: <span id="moveCount">0</span> |
@@ -454,12 +521,20 @@
     const music = {
       audio: document.getElementById('bgMusic'),
       started: false,
-      muted: localStorage.getItem('musicMuted') === 'true'
+      muted: localStorage.getItem('musicMuted') === 'true',
+      volume: parseFloat(localStorage.getItem('musicVolume')) || 0.5
     };
 
-    // Initialize mute state from localStorage
+    // Initialize music settings from localStorage
     function initMusic() {
       const muteBtn = document.getElementById('muteBtn');
+      const volumeSlider = document.getElementById('volumeSlider');
+      const volumeValue = document.getElementById('volumeValue');
+
+      // Set volume from stored value
+      music.audio.volume = music.volume;
+      volumeSlider.value = Math.round(music.volume * 100);
+      volumeValue.textContent = Math.round(music.volume * 100);
 
       if (music.muted) {
         music.audio.muted = true;
@@ -470,16 +545,71 @@
         muteBtn.textContent = '🔊';
         muteBtn.classList.remove('muted');
       }
+
+      // Volume slider change handler
+      volumeSlider.addEventListener('input', (e) => {
+        const vol = parseInt(e.target.value) / 100;
+        music.volume = vol;
+        music.audio.volume = vol;
+        volumeValue.textContent = e.target.value;
+        localStorage.setItem('musicVolume', vol);
+
+        // Auto-unmute if adjusting volume while muted
+        if (music.muted && vol > 0) {
+          music.muted = false;
+          music.audio.muted = false;
+          muteBtn.textContent = '🔊';
+          muteBtn.classList.remove('muted');
+          localStorage.setItem('musicMuted', 'false');
+        }
+      });
+
+      // Right-click on mute button shows volume popup
+      muteBtn.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        toggleVolumePopup();
+      });
+
+      // Long-press on mute button for mobile
+      let longPressTimer = null;
+      muteBtn.addEventListener('touchstart', (e) => {
+        longPressTimer = setTimeout(() => {
+          e.preventDefault();
+          toggleVolumePopup();
+        }, 500);
+      });
+      muteBtn.addEventListener('touchend', () => {
+        clearTimeout(longPressTimer);
+      });
+      muteBtn.addEventListener('touchmove', () => {
+        clearTimeout(longPressTimer);
+      });
+
+      // Click outside closes popup
+      document.addEventListener('click', (e) => {
+        const popup = document.getElementById('volumePopup');
+        const muteBtn = document.getElementById('muteBtn');
+        if (!popup.contains(e.target) && e.target !== muteBtn) {
+          popup.classList.remove('show');
+        }
+      });
+    }
+
+    function toggleVolumePopup() {
+      const popup = document.getElementById('volumePopup');
+      popup.classList.toggle('show');
     }
 
     // Start music on first user interaction
     function startMusicOnInteraction() {
       if (!music.started) {
         // Always start the music (respect mute state via audio.muted)
-        music.audio.play().catch(err => {
-          console.log('Audio play prevented:', err);
+        music.audio.play().then(() => {
+          music.started = true;
+        }).catch(err => {
+          // Will retry on next interaction
+          console.log('Audio play prevented, will retry:', err);
         });
-        music.started = true;
       }
     }
 
@@ -501,6 +631,9 @@
           startMusicOnInteraction();
         }
       }
+
+      // Close volume popup when toggling mute
+      document.getElementById('volumePopup').classList.remove('show');
     }
 
     // ===== SOKOBAN SOLVER =====
@@ -1066,6 +1199,28 @@
     // ===== INITIALIZE =====
     initMusic();
     loadLevel(0);
+
+    // Start music on any first interaction (click, touch, or keypress)
+    function setupFirstInteraction() {
+      const removeHandlers = () => {
+        document.removeEventListener('click', handler);
+        document.removeEventListener('touchstart', handler);
+        document.removeEventListener('keydown', handler);
+      };
+      const handler = () => {
+        music.audio.play().then(() => {
+          music.started = true;
+          removeHandlers();
+        }).catch(() => {
+          // Keep listeners active to retry on next interaction
+        });
+      };
+      document.addEventListener('click', handler);
+      document.addEventListener('touchstart', handler);
+      document.addEventListener('keydown', handler);
+    }
+    setupFirstInteraction();
+
     // Verify levels in background (disabled - solver gives false negatives for complex levels)
     // setTimeout(verifyAllLevels, 1000);
   </script>
