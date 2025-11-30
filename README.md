@@ -2,6 +2,8 @@
 
 ## A Game By Happy Unicorn Army
 
+**[Play Now!](https://hua-games.github.io/rainbowpush)**
+
 ![Rainbow Push Screenshot](screenshot.jpg)
 
 ## 🎮 How to Play
