@@ -8,14 +8,14 @@
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://happyunicornarmy.com/rainbow-quest">
+  <meta property="og:url" content="https://hua-games.github.io/rainbowpush">
   <meta property="og:title" content="Rainbow Quest - Unicorn Puzzle Game">
   <meta property="og:description" content="Guide your unicorn through 7 magical levels collecting rainbow crystals in this delightful puzzle game!">
   <meta property="og:image" content="screenshot.jpg">
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image">
-  <meta property="twitter:url" content="https://happyunicornarmy.com/rainbow-quest">
+  <meta property="twitter:url" content="https://hua-games.github.io/rainbowpush">
   <meta property="twitter:title" content="Rainbow Quest - Unicorn Puzzle Game">
   <meta property="twitter:description" content="Guide your unicorn through 7 magical levels collecting rainbow crystals in this delightful puzzle game!">
   <meta property="twitter:image" content="screenshot.jpg">
@@ -94,6 +94,8 @@
       top: 50%;
       transform: translateY(calc(-50% + 46px));
       height: 3.15em;
+      -webkit-user-drag: none;
+      user-drag: none;
     }
 
     .site-link {
@@ -146,6 +148,8 @@
       transition: all 0.2s;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
       white-space: nowrap;
+      -webkit-user-select: none;
+      user-select: none;
     }
 
     button:hover {
@@ -489,6 +493,8 @@
       height: 40px;
       object-fit: contain;
       filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+      -webkit-user-drag: none;
+      user-drag: none;
     }
 
     .unicorn-center:active {
@@ -547,7 +553,7 @@
   </div>
 
   <!-- Version Number -->
-  <div id="version">v0.3.0</div>
+  <div id="version">v0.3.1</div>
 
   <div id="game">
     <div id="ui">
@@ -1572,14 +1578,29 @@
 
     async function copyShareLink() {
       const link = generateShareLink();
+      const totalStars = Object.values(game.levelStars).reduce((sum, s) => sum + s, 0);
+      const maxStars = levels.length * 3;
+
+      let text = '🌈 Rainbow Push Results 🦄\n\n';
+      levels.forEach((level, i) => {
+        const stars = game.levelStars[i] || 0;
+        const displayStars = Math.min(stars, 3);
+        const emptyStars = Math.max(0, 3 - stars);
+        const bonusStar = stars === 4 ? '💎' : '';
+        const starEmojis = '⭐'.repeat(displayStars) + '☆'.repeat(emptyStars) + bonusStar;
+        text += `${starEmojis} ${level.name}\n`;
+      });
+      text += `\n✨ Total: ${totalStars}/${maxStars} stars\n\n`;
+      text += `🦄 ${link}`;
+
       try {
-        await navigator.clipboard.writeText(link);
+        await navigator.clipboard.writeText(text);
         const btn = document.getElementById('copyLinkBtn');
         const originalText = btn.textContent;
         btn.textContent = '✓ Copied!';
         setTimeout(() => { btn.textContent = originalText; }, 2000);
       } catch (err) {
-        prompt('Copy this link:', link);
+        prompt('Copy your results:', text);
       }
     }
 
