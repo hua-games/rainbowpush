@@ -82,9 +82,27 @@
       height: 2.6em;
     }
 
+    .site-link {
+      position: absolute;
+      right: 0;
+      top: calc(100% - 5px);
+      font-size: 0.55em;
+      background: linear-gradient(to right, #f44336, #ff9800, #ffc107, #4caf50, #2196f3, #e91e9e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+      font-weight: normal;
+      filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5));
+    }
+
+    .site-link:hover {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
     #levelInfo {
       font-size: 1.1em;
-      margin: 5px 0;
+      margin: 22px 0 5px 0;
       opacity: 0.9;
     }
 
@@ -105,7 +123,7 @@
       background: #9b59d0;
       color: white;
       border: none;
-      padding: 10px 16px;
+      padding: 6px 14px;
       border-radius: 8px;
       font-size: 0.9em;
       cursor: pointer;
@@ -140,6 +158,7 @@
       margin: auto;
       width: fit-content;
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+      justify-items: center;
     }
 
     #game {
@@ -403,9 +422,8 @@
       user-select: none;
       transition: all 0.2s;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-      line-height: 0.8;
-      padding: 0;
-      padding-bottom: 3px;
+      line-height: 1;
+      padding: 0 0 5px 0;
     }
 
     .unicorn-center {
@@ -481,11 +499,11 @@
   </div>
 
   <!-- Version Number -->
-  <div id="version">v0.2.0</div>
+  <div id="version">v0.2.1</div>
 
   <div id="game">
     <div id="ui">
-      <h1><img src="graphics/unicorn.png" alt="Unicorn" class="unicorn-link" onclick="window.open('https://happyunicornarmy.com', '_blank')">Rainbow Sokoban</h1>
+      <h1><img src="graphics/unicorn.png" alt="Unicorn" class="unicorn-link" onclick="window.open('https://happyunicornarmy.com', '_blank')">Rainbow Sokoban<a href="https://happyunicornarmy.com" target="_blank" class="site-link">happyunicornarmy.com</a></h1>
       <div id="levelInfo">Level <span id="levelNum">1</span>: <span id="levelName">Loading...</span></div>
       <div id="stats">
         Moves: <span id="moveCount">0</span> |
@@ -1006,7 +1024,7 @@
     function renderGrid() {
       const gridEl = document.getElementById('grid');
       gridEl.innerHTML = '';
-      gridEl.style.gridTemplateColumns = `repeat(${game.grid.width}, 50px)`;
+      gridEl.style.gridTemplateColumns = `repeat(${game.grid.width}, 45px)`;
 
       for (let y = 0; y < game.grid.height; y++) {
         for (let x = 0; x < game.grid.width; x++) {

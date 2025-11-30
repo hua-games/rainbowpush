@@ -28,7 +28,7 @@ const levelDefinitions = [
   },
   {
     name: "Two Colors",
-    optimalMoves: 7,
+    optimalMoves: 8,
     hint: "Two crystals, two colors!",
     grid: [
       "######",
@@ -109,7 +109,7 @@ const levelDefinitions = [
     ]
   },
   {
-    name: "🌈 RAINBOW FINALE 🌈",
+    name: "Lucky Seven",
     optimalMoves: 95,
     hint: "All seven colors of the rainbow!",
     grid: [
