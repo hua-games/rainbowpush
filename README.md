@@ -1,6 +1,8 @@
-# Rainbow Push 🦄 
+# Rainbow Push 🦄
 
 ## A Game By Happy Unicorn Army
+
+![Rainbow Push Screenshot](screenshot.jpg)
 
 ## 🎮 How to Play
 
