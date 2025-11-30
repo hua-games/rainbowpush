@@ -7,8 +7,8 @@
 // y/Y = yellow crystal/restore point
 // g/G = green crystal/restore point
 // b/B = blue crystal/restore point
-// p/V = purple crystal/restore point (V to avoid conflict with P)
-// k/K = pink crystal/restore point
+// i/I = indigo crystal/restore point
+// v/V = violet crystal/restore point
 
 const levelDefinitions = [
   {
@@ -57,36 +57,36 @@ const levelDefinitions = [
     ]
   },
   {
-    name: "Four in a Row",
-    optimalMoves: 20,
+    name: "Back And Fourth",
+    optimalMoves: 17,
     hint: "Four crystals in a line!",
     grid: [
       "######",
       "#Pr.R#",
       "#....#",
-      "#.o.O#",
+      "#O.o.#",
       "#....#",
       "#.y.Y#",
       "#....#",
-      "#.g.G#",
+      "#G.g.#",
       "######"
     ]
   },
   {
     name: "The Five Points",
-    optimalMoves: 39,
+    optimalMoves: 42,
     hint: "Five colors shine!",
     grid: [
       "#######",
-      "#.r..R#",
+      "#.G.B.#",
+      "#..r..#",
+      "#O.o..#",
       "#.....#",
-      "#.o..O#",
+      "#P.ybY#",
       "#.....#",
-      "#Py..Y#",
       "#.....#",
-      "#.g..G#",
+      "#.gR..#",
       "#.....#",
-      "#.b..B#",
       "#######"
     ]
   },
@@ -96,33 +96,33 @@ const levelDefinitions = [
     hint: "Six gems to place!",
     grid: [
       "#######",
-      "#.r..R#",
-      "#.o..O#",
+      "#Y.I.R#",
+      "#..b..#",
       "#.....#",
-      "#.y..Y#",
-      "#Pg..G#",
+      "#..r..#",
+      "#.yPg.#",
+      "#..o..#",
       "#.....#",
-      "#.b..B#",
-      "#.p..V#",
-      "#.....#",
+      "#..i..#",
+      "#G.B.Y#",
       "#######"
     ]
   },
   {
     name: "🌈 RAINBOW FINALE 🌈",
-    optimalMoves: 52,
+    optimalMoves: 95,
     hint: "All seven colors of the rainbow!",
     grid: [
       "#######",
-      "#.r..R#",
-      "#.o..O#",
-      "#.y..Y#",
       "#.....#",
-      "#.g..G#",
-      "#Pb..B#",
-      "#.....#",
-      "#.p..V#",
-      "#.k..K#",
+      "#..P..#",
+      "#.r.V.#",
+      "#.o.I.#",
+      "#.y.B.#",
+      "#.g.G.#",
+      "#.b.Y.#",
+      "#.i.O.#",
+      "#.v.R.#",
       "#.....#",
       "#######"
     ]
@@ -137,8 +137,8 @@ function parseLevels(definitions) {
     'y': 'yellow', 'Y': 'yellow',
     'g': 'green', 'G': 'green',
     'b': 'blue', 'B': 'blue',
-    'p': 'purple', 'V': 'purple',
-    'k': 'pink', 'K': 'pink'
+    'i': 'indigo', 'I': 'indigo',
+    'v': 'violet', 'V': 'violet'
   };
 
   return definitions.map(def => {
@@ -167,12 +167,12 @@ function parseLevels(definitions) {
         }
 
         // Parse crystals (lowercase letters)
-        if (char.match(/[roygbpk]/)) {
+        if (char.match(/[roygbiv]/)) {
           crystals.push({ x, y, color: colorMap[char] });
         }
 
         // Parse restore points (uppercase letters except P)
-        if (char.match(/[ROYGBVK]/)) {
+        if (char.match(/[ROYGBIV]/)) {
           restorePoints.push({ x, y, color: colorMap[char] });
         }
       }

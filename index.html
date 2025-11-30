@@ -30,10 +30,10 @@
       0% { background: linear-gradient(135deg, #f44336 0%, #ff9800 100%); }
       14% { background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%); }
       28% { background: linear-gradient(135deg, #ffc107 0%, #4caf50 100%); }
-      42% { background: linear-gradient(135deg, #4caf50 0%, #2196f3 100%); }
-      57% { background: linear-gradient(135deg, #2196f3 0%, #9c27b0 100%); }
-      71% { background: linear-gradient(135deg, #9c27b0 0%, #e91e63 100%); }
-      85% { background: linear-gradient(135deg, #e91e63 0%, #f44336 100%); }
+      43% { background: linear-gradient(135deg, #4caf50 0%, #2196f3 100%); }
+      57% { background: linear-gradient(135deg, #2196f3 0%, #3F51B5 100%); }
+      71% { background: linear-gradient(135deg, #3F51B5 0%, #9c27b0 100%); }
+      86% { background: linear-gradient(135deg, #9c27b0 0%, #f44336 100%); }
       100% { background: linear-gradient(135deg, #f44336 0%, #ff9800 100%); }
     }
 
@@ -67,9 +67,19 @@
     }
 
     h1 {
-      font-size: 2em;
+      font-size: 1.6em;
       margin-bottom: 5px;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      position: relative;
+      padding-left: 75px;
+    }
+
+    h1 img {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(calc(-50% + 14px));
+      height: 2.6em;
     }
 
     #levelInfo {
@@ -193,8 +203,8 @@
     .restore-point.yellow { border-color: #ffc107; color: #ffc107; }
     .restore-point.green { border-color: #4caf50; color: #4caf50; }
     .restore-point.blue { border-color: #2196f3; color: #2196f3; }
-    .restore-point.purple { border-color: #9c27b0; color: #9c27b0; }
-    .restore-point.pink { border-color: #e91e63; color: #e91e63; }
+    .restore-point.indigo { border-color: #3F51B5; color: #3F51B5; }
+    .restore-point.violet { border-color: #9c27b0; color: #9c27b0; }
 
     .crystal {
       position: absolute;
@@ -211,8 +221,8 @@
     .crystal.yellow { background: radial-gradient(circle at 30% 30%, #ffd54f, #ffc107); }
     .crystal.green { background: radial-gradient(circle at 30% 30%, #81c784, #4caf50); }
     .crystal.blue { background: radial-gradient(circle at 30% 30%, #64b5f6, #2196f3); }
-    .crystal.purple { background: radial-gradient(circle at 30% 30%, #ba68c8, #9c27b0); }
-    .crystal.pink { background: radial-gradient(circle at 30% 30%, #f06292, #e91e63); }
+    .crystal.indigo { background: radial-gradient(circle at 30% 30%, #7986CB, #3F51B5); }
+    .crystal.violet { background: radial-gradient(circle at 30% 30%, #ba68c8, #9c27b0); }
 
     .crystal.activated {
       animation: sparkle 0.5s ease-out;
@@ -471,11 +481,11 @@
   </div>
 
   <!-- Version Number -->
-  <div id="version">v0.1.1</div>
+  <div id="version">v0.2.0</div>
 
   <div id="game">
     <div id="ui">
-      <h1><img src="graphics/unicorn.png" alt="Unicorn" class="unicorn-link" onclick="window.open('https://happyunicornarmy.com', '_blank')" style="height: 2em; vertical-align: middle; margin-right: 0.2em;"> Rainbow Sokoban </h1>
+      <h1><img src="graphics/unicorn.png" alt="Unicorn" class="unicorn-link" onclick="window.open('https://happyunicornarmy.com', '_blank')">Rainbow Sokoban</h1>
       <div id="levelInfo">Level <span id="levelNum">1</span>: <span id="levelName">Loading...</span></div>
       <div id="stats">
         Moves: <span id="moveCount">0</span> |
@@ -506,6 +516,7 @@
         <button id="victoryResetBtn">🔄 Retry</button>
         <button id="victoryNextBtn">Next Level →</button>
       </div>
+      <button id="victoryShareBtn" style="display:none; margin-top: 10px;">📤 Share Results</button>
     </div>
   </div>
 
@@ -636,6 +647,199 @@
       document.getElementById('volumePopup').classList.remove('show');
     }
 
+    // ===== SOUND EFFECTS SYSTEM =====
+
+    const sfx = {
+      audioContext: null,
+      initialized: false,
+      volume: 0.5
+    };
+
+    // Initialize Web Audio API context (must be called after user interaction)
+    function initSoundEffects() {
+      if (sfx.initialized) return;
+      try {
+        sfx.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        sfx.initialized = true;
+        // Sync volume with music volume
+        sfx.volume = music.volume;
+      } catch (e) {
+        console.log('Web Audio API not supported:', e);
+      }
+    }
+
+    // Create an oscillator note
+    function createNote(freq, startTime, duration, type = 'sine', gainValue = 0.3) {
+      if (!sfx.audioContext || music.muted) return;
+
+      const oscillator = sfx.audioContext.createOscillator();
+      const gainNode = sfx.audioContext.createGain();
+
+      oscillator.type = type;
+      oscillator.frequency.setValueAtTime(freq, startTime);
+
+      // Apply volume with envelope
+      const effectiveGain = gainValue * sfx.volume;
+      gainNode.gain.setValueAtTime(0, startTime);
+      gainNode.gain.linearRampToValueAtTime(effectiveGain, startTime + 0.02);
+      gainNode.gain.setValueAtTime(effectiveGain, startTime + duration - 0.05);
+      gainNode.gain.linearRampToValueAtTime(0, startTime + duration);
+
+      oscillator.connect(gainNode);
+      gainNode.connect(sfx.audioContext.destination);
+
+      oscillator.start(startTime);
+      oscillator.stop(startTime + duration);
+
+      return oscillator;
+    }
+
+    // Zelda-style "item get" chime when crystal is placed correctly
+    function playCrystalPlacementSound(color) {
+      initSoundEffects();
+      if (!sfx.audioContext || music.muted) return;
+
+      const now = sfx.audioContext.currentTime;
+
+      // Color-based pitch variation (descending pitch through ROYGBIV)
+      const colorPitchMap = {
+        'red': 1.15,
+        'orange': 1.10,
+        'yellow': 1.05,
+        'green': 1.0,
+        'blue': 0.95,
+        'indigo': 0.90,
+        'violet': 0.85
+      };
+      const pitchMult = colorPitchMap[color] || 1.0;
+
+      // Classic Zelda item jingle: quick ascending notes with a triumphant finish
+      // Base frequencies for the jingle
+      const baseFreqs = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+
+      // Play the ascending arpeggio
+      baseFreqs.forEach((freq, i) => {
+        createNote(freq * pitchMult, now + i * 0.08, 0.15, 'sine', 0.25);
+        // Add a subtle harmony
+        createNote(freq * pitchMult * 1.5, now + i * 0.08, 0.12, 'sine', 0.1);
+      });
+
+      // Sparkle overtone at the end
+      createNote(1318.51 * pitchMult, now + 0.32, 0.3, 'sine', 0.15);
+    }
+
+    // Triumphant fanfare for level completion
+    function playLevelCompleteSound() {
+      initSoundEffects();
+      if (!sfx.audioContext || music.muted) return;
+
+      const now = sfx.audioContext.currentTime;
+
+      // Triumphant fanfare melody
+      const fanfare = [
+        // First phrase - attention grabber
+        { freq: 523.25, time: 0, dur: 0.15 },      // C5
+        { freq: 523.25, time: 0.12, dur: 0.15 },   // C5
+        { freq: 523.25, time: 0.24, dur: 0.15 },   // C5
+        { freq: 659.25, time: 0.40, dur: 0.35 },   // E5 (held)
+
+        // Second phrase - rising
+        { freq: 587.33, time: 0.80, dur: 0.15 },   // D5
+        { freq: 659.25, time: 0.95, dur: 0.15 },   // E5
+        { freq: 698.46, time: 1.10, dur: 0.15 },   // F5
+        { freq: 783.99, time: 1.25, dur: 0.50 },   // G5 (held)
+
+        // Finale - triumphant resolution
+        { freq: 880.00, time: 1.80, dur: 0.20 },   // A5
+        { freq: 987.77, time: 2.00, dur: 0.20 },   // B5
+        { freq: 1046.50, time: 2.20, dur: 0.60 }, // C6 (triumphant finish)
+      ];
+
+      // Play main melody
+      fanfare.forEach(note => {
+        createNote(note.freq, now + note.time, note.dur, 'sine', 0.25);
+      });
+
+      // Add harmony layer (thirds below)
+      const harmonyOffset = Math.pow(2, -4/12); // Major third below
+      fanfare.forEach(note => {
+        createNote(note.freq * harmonyOffset, now + note.time, note.dur, 'sine', 0.12);
+      });
+
+      // Add bass notes for depth
+      const bassNotes = [
+        { freq: 130.81, time: 0, dur: 0.40 },      // C3
+        { freq: 146.83, time: 0.80, dur: 0.40 },   // D3
+        { freq: 174.61, time: 1.80, dur: 0.80 },   // F3
+      ];
+      bassNotes.forEach(note => {
+        createNote(note.freq, now + note.time, note.dur, 'triangle', 0.2);
+      });
+
+      // Shimmering finale chord
+      const finaleChord = [1046.50, 1318.51, 1567.98]; // C6, E6, G6
+      finaleChord.forEach(freq => {
+        createNote(freq, now + 2.2, 0.8, 'sine', 0.15);
+      });
+    }
+
+    // Extra special fanfare for final level (rainbow victory)
+    function playRainbowVictorySound() {
+      initSoundEffects();
+      if (!sfx.audioContext || music.muted) return;
+
+      const now = sfx.audioContext.currentTime;
+
+      // Extended rainbow fanfare - more elaborate than regular victory
+      const fanfare = [
+        // Opening flourish
+        { freq: 392.00, time: 0, dur: 0.12 },      // G4
+        { freq: 493.88, time: 0.10, dur: 0.12 },   // B4
+        { freq: 587.33, time: 0.20, dur: 0.12 },   // D5
+        { freq: 783.99, time: 0.30, dur: 0.25 },   // G5
+
+        // Main theme
+        { freq: 659.25, time: 0.60, dur: 0.20 },   // E5
+        { freq: 783.99, time: 0.80, dur: 0.20 },   // G5
+        { freq: 880.00, time: 1.00, dur: 0.20 },   // A5
+        { freq: 1046.50, time: 1.20, dur: 0.40 },  // C6
+
+        // Rising rainbow scale
+        { freq: 523.25, time: 1.70, dur: 0.10 },   // C5 - red
+        { freq: 587.33, time: 1.80, dur: 0.10 },   // D5 - orange
+        { freq: 659.25, time: 1.90, dur: 0.10 },   // E5 - yellow
+        { freq: 698.46, time: 2.00, dur: 0.10 },   // F5 - green
+        { freq: 783.99, time: 2.10, dur: 0.10 },   // G5 - blue
+        { freq: 880.00, time: 2.20, dur: 0.10 },   // A5 - purple
+        { freq: 987.77, time: 2.30, dur: 0.10 },   // B5 - pink
+
+        // Grand finale
+        { freq: 1046.50, time: 2.50, dur: 0.80 },  // C6
+        { freq: 1318.51, time: 2.70, dur: 0.60 },  // E6
+        { freq: 1567.98, time: 2.90, dur: 0.40 },  // G6
+      ];
+
+      fanfare.forEach(note => {
+        createNote(note.freq, now + note.time, note.dur, 'sine', 0.22);
+      });
+
+      // Harmony
+      fanfare.slice(4).forEach(note => {
+        createNote(note.freq * 0.75, now + note.time, note.dur, 'sine', 0.1);
+      });
+
+      // Deep bass foundation
+      createNote(65.41, now, 1.0, 'triangle', 0.25);  // C2
+      createNote(87.31, now + 1.2, 1.0, 'triangle', 0.25);  // F2
+      createNote(65.41, now + 2.5, 1.2, 'triangle', 0.3);  // C2
+
+      // Sparkle overlay
+      for (let i = 0; i < 8; i++) {
+        const sparkleFreq = 2000 + Math.random() * 2000;
+        createNote(sparkleFreq, now + 2.5 + i * 0.1, 0.15, 'sine', 0.05);
+      }
+    }
+
     // ===== SOKOBAN SOLVER =====
 
     function solveSokoban(levelData) {
@@ -764,7 +968,8 @@
       restorePoints: [],
       isMoving: false,
       isComplete: false,
-      completedLevels: JSON.parse(localStorage.getItem('completedLevels') || '[]')
+      completedLevels: JSON.parse(localStorage.getItem('completedLevels') || '[]'),
+      levelStars: JSON.parse(localStorage.getItem('levelStars') || '{}')
     };
 
     // ===== CORE FUNCTIONS =====
@@ -790,6 +995,7 @@
       // Reset victory screen customizations
       document.getElementById('victory').style.display = 'none';
       document.getElementById('victoryResetBtn').style.display = 'block';
+      document.getElementById('victoryShareBtn').style.display = 'none';
       document.body.classList.remove('rainbow-victory');
 
       updateUI();
@@ -865,11 +1071,17 @@
       document.getElementById('nextBtn').disabled = !canGoNext;
     }
 
-    function markLevelComplete() {
+    function markLevelComplete(stars) {
       if (!game.completedLevels.includes(game.level)) {
         game.completedLevels.push(game.level);
         localStorage.setItem('completedLevels', JSON.stringify(game.completedLevels));
         updateButtons();
+      }
+      // Save best stars for this level (only if better than previous)
+      const currentBest = game.levelStars[game.level] || 0;
+      if (stars > currentBest) {
+        game.levelStars[game.level] = stars;
+        localStorage.setItem('levelStars', JSON.stringify(game.levelStars));
       }
     }
 
@@ -935,6 +1147,8 @@
 
         if (rp.active && !wasActive && crystal) {
           crystal.activated = true;
+          // Play the Zelda-style crystal placement chime
+          playCrystalPlacementSound(crystal.color);
         }
       });
     }
@@ -949,13 +1163,13 @@
     }
 
     function showVictory() {
-      markLevelComplete();
-
       const optimal = levels[game.level].optimalMoves;
       let stars = 1;
       const isOptimal = game.moves <= optimal;
       if (isOptimal) stars = 3;
       else if (game.moves <= optimal * 1.5) stars = 2;
+
+      markLevelComplete(stars);
 
       const starStr = '⭐'.repeat(stars);
 
@@ -970,13 +1184,15 @@
       if (isLastLevel) {
         document.getElementById('victoryStats').innerHTML = `
           <h2 style="font-size: 2.5em; margin: 15px 0;">🌈</h2>
-          <strong style="font-size: 1.4em; background: linear-gradient(to right, #f44336, #ff9800, #ffc107, #4caf50, #2196f3, #9c27b0, #e91e63); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">RAINBOW VICTORY!</strong><br><br>
+          <strong style="font-size: 1.4em; background: linear-gradient(to right, #f44336, #ff9800, #ffc107, #4caf50, #2196f3, #3F51B5, #9c27b0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">RAINBOW VICTORY!</strong><br><br>
           <strong>Moves:</strong> ${game.moves}<br>
           <strong>Optimal:</strong> ${optimal}<br>
           <strong>Stars:</strong> ${starStr}<br><br>
           <em>You've mastered all the colors!</em>
         `;
         createRainbowCelebration();
+        // Play the special rainbow victory fanfare
+        playRainbowVictorySound();
         // Activate rainbow background
         document.body.classList.add('rainbow-victory');
         // Hide retry button on final level
@@ -986,12 +1202,16 @@
         nextBtn.textContent = 'Happy Unicorn Army';
         nextBtn.onclick = () => window.open('https://happyunicornarmy.com', '_blank');
         nextBtn.disabled = false;
+        // Show share button on final level
+        document.getElementById('victoryShareBtn').style.display = 'block';
       } else {
         document.getElementById('victoryStats').innerHTML = `
           <strong>Moves:</strong> ${game.moves}<br>
           <strong>Optimal:</strong> ${optimal}<br>
           <strong>Stars:</strong> ${starStr}
         `;
+        // Play the level complete fanfare
+        playLevelCompleteSound();
       }
 
       document.getElementById('victory').style.display = 'block';
@@ -1009,8 +1229,60 @@
       }
     }
 
+    // ===== SHARE FUNCTIONALITY =====
+
+    function generateShareText() {
+      const totalStars = Object.values(game.levelStars).reduce((sum, s) => sum + s, 0);
+      const maxStars = levels.length * 3;
+
+      let text = '🌈 Rainbow Quest Complete! 🦄\n\n';
+
+      levels.forEach((level, i) => {
+        const stars = game.levelStars[i] || 0;
+        const starEmojis = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+        // Clean level name (remove emojis for cleaner share text)
+        const cleanName = level.name.replace(/🌈/g, '').trim();
+        text += `${starEmojis} ${cleanName}\n`;
+      });
+
+      text += `\n✨ Total: ${totalStars}/${maxStars} stars\n`;
+      text += '\n🦄 https://happyunicornarmy.com/rainbow-quest';
+
+      return text;
+    }
+
+    async function shareResults() {
+      const shareText = generateShareText();
+
+      // Try Web Share API first (works on mobile)
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: 'Rainbow Quest - My Results',
+            text: shareText
+          });
+          return;
+        } catch (err) {
+          // User cancelled or share failed, fall through to clipboard
+          if (err.name === 'AbortError') return;
+        }
+      }
+
+      // Fallback to clipboard
+      try {
+        await navigator.clipboard.writeText(shareText);
+        const btn = document.getElementById('victoryShareBtn');
+        const originalText = btn.textContent;
+        btn.textContent = '✓ Copied!';
+        setTimeout(() => { btn.textContent = originalText; }, 2000);
+      } catch (err) {
+        // Final fallback - show in a prompt
+        prompt('Copy your results:', shareText);
+      }
+    }
+
     function createRainbowCelebration() {
-      const colors = ['#f44336', '#ff9800', '#ffc107', '#4caf50', '#2196f3', '#9c27b0', '#e91e63'];
+      const colors = ['#f44336', '#ff9800', '#ffc107', '#4caf50', '#2196f3', '#3F51B5', '#9c27b0'];
 
       for (let i = 0; i < 50; i++) {
         setTimeout(() => {
@@ -1154,6 +1426,9 @@
       if (game.level + 1 < levels.length) {
         loadLevel(game.level + 1);
       }
+    };
+    document.getElementById('victoryShareBtn').onclick = () => {
+      shareResults();
     };
 
     // Mute button
