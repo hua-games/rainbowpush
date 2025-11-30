@@ -4,20 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rainbow Quest - Unicorn Puzzle Game</title>
-  <meta name="description" content="Guide your unicorn through 7 magical levels collecting rainbow crystals in this delightful Sokoban-style puzzle game!">
+  <meta name="description" content="Guide your unicorn through 7 magical levels collecting rainbow crystals in this delightful puzzle game!">
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://happyunicornarmy.com/rainbow-quest">
   <meta property="og:title" content="Rainbow Quest - Unicorn Puzzle Game">
-  <meta property="og:description" content="Guide your unicorn through 7 magical levels collecting rainbow crystals in this delightful Sokoban-style puzzle game!">
+  <meta property="og:description" content="Guide your unicorn through 7 magical levels collecting rainbow crystals in this delightful puzzle game!">
   <meta property="og:image" content="graphics/unicorn.png">
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image">
   <meta property="twitter:url" content="https://happyunicornarmy.com/rainbow-quest">
   <meta property="twitter:title" content="Rainbow Quest - Unicorn Puzzle Game">
-  <meta property="twitter:description" content="Guide your unicorn through 7 magical levels collecting rainbow crystals in this delightful Sokoban-style puzzle game!">
+  <meta property="twitter:description" content="Guide your unicorn through 7 magical levels collecting rainbow crystals in this delightful puzzle game!">
   <meta property="twitter:image" content="graphics/unicorn.png">
   <style>
     * {
@@ -26,26 +26,34 @@
       box-sizing: border-box;
     }
 
+    html {
+      min-width: 400px;
+      min-height: 900px;
+    }
+
     @keyframes rainbowBackground {
-      0% { background: linear-gradient(135deg, #f44336 0%, #ff9800 100%); }
-      14% { background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%); }
-      28% { background: linear-gradient(135deg, #ffc107 0%, #4caf50 100%); }
-      43% { background: linear-gradient(135deg, #4caf50 0%, #2196f3 100%); }
-      57% { background: linear-gradient(135deg, #2196f3 0%, #3F51B5 100%); }
-      71% { background: linear-gradient(135deg, #3F51B5 0%, #9c27b0 100%); }
-      86% { background: linear-gradient(135deg, #9c27b0 0%, #f44336 100%); }
-      100% { background: linear-gradient(135deg, #f44336 0%, #ff9800 100%); }
+      0% { background-image: linear-gradient(135deg, #f44336 0%, #ff9800 100%); }
+      14% { background-image: linear-gradient(135deg, #ff9800 0%, #ffc107 100%); }
+      28% { background-image: linear-gradient(135deg, #ffc107 0%, #4caf50 100%); }
+      43% { background-image: linear-gradient(135deg, #4caf50 0%, #2196f3 100%); }
+      57% { background-image: linear-gradient(135deg, #2196f3 0%, #3F51B5 100%); }
+      71% { background-image: linear-gradient(135deg, #3F51B5 0%, #9c27b0 100%); }
+      86% { background-image: linear-gradient(135deg, #9c27b0 0%, #f44336 100%); }
+      100% { background-image: linear-gradient(135deg, #f44336 0%, #ff9800 100%); }
     }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background-attachment: fixed;
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      min-height: 100vh;
+      min-height: max(100vh, 900px);
+      min-width: 400px;
       color: white;
       padding: 10px 20px 20px 20px;
+      overflow: auto;
     }
 
     body.rainbow-victory {
@@ -59,11 +67,14 @@
 
     #ui {
       background: rgba(0, 0, 0, 0.3);
-      padding: 10px;
+      padding: 5px 10px 15px 10px;
       border-radius: 15px;
       margin-top: 5px;
       margin-bottom: 10px;
       backdrop-filter: blur(10px);
+      width: 359px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     h1 {
@@ -72,19 +83,23 @@
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
       position: relative;
       padding-left: 75px;
+      padding-right: 75px;
+      text-align: center;
+      white-space: nowrap;
     }
 
     h1 img {
       position: absolute;
       left: 0;
       top: 50%;
-      transform: translateY(calc(-50% + 14px));
-      height: 2.6em;
+      transform: translateY(calc(-50% + 46px));
+      height: 3.15em;
     }
 
     .site-link {
       position: absolute;
-      right: 0;
+      left: 50%;
+      transform: translateX(-50%);
       top: calc(100% - 5px);
       font-size: 0.55em;
       background: linear-gradient(to right, #f44336, #ff9800, #ffc107, #4caf50, #2196f3, #e91e9e);
@@ -278,6 +293,25 @@
       animation: victoryAppear 0.5s ease-out;
     }
 
+    #victory.shared-view {
+      min-width: 340px;
+      min-height: 700px;
+      padding: 30px 40px;
+    }
+
+    #victory.shared-view #victoryMainButtons {
+      margin-top: 35px;
+    }
+
+    #victory.shared-view #huaButtonGroup {
+      margin-top: 40px !important;
+    }
+
+    #victory.shared-view #victoryNextBtn {
+      padding: 12px 28px;
+      font-size: 1.2em;
+    }
+
     @keyframes victoryAppear {
       from {
         transform: translate(-50%, -50%) scale(0.5);
@@ -367,7 +401,11 @@
       text-align: center;
     }
 
-    #volumeSlider {
+    #volumePopup label:not(:first-child) {
+      margin-top: 12px;
+    }
+
+    #volumePopup input[type="range"] {
       width: 120px;
       height: 6px;
       -webkit-appearance: none;
@@ -376,7 +414,7 @@
       outline: none;
     }
 
-    #volumeSlider::-webkit-slider-thumb {
+    #volumePopup input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       width: 18px;
       height: 18px;
@@ -386,7 +424,7 @@
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
 
-    #volumeSlider::-moz-range-thumb {
+    #volumePopup input[type="range"]::-moz-range-thumb {
       width: 18px;
       height: 18px;
       background: #9b59d0;
@@ -406,6 +444,14 @@
       grid-template-rows: repeat(3, 50px);
       gap: 6px;
       z-index: 1000;
+    }
+
+    @media (max-height: 899px) {
+      #mobileControls {
+        position: static;
+        transform: none;
+        margin: 20px auto 20px auto;
+      }
     }
 
     .control-btn {
@@ -490,26 +536,28 @@
   </audio>
 
   <!-- Mute Button -->
-  <button id="muteBtn" title="Toggle Music (right-click for volume)">🔊</button>
+  <button id="muteBtn" title="Toggle Audio (right-click for volume)">🔊</button>
 
   <!-- Volume Popup -->
   <div id="volumePopup">
-    <label>Volume: <span id="volumeValue">50</span>%</label>
+    <label>Music: <span id="volumeValue">50</span>%</label>
     <input type="range" id="volumeSlider" min="0" max="100" value="50">
+    <label>Sound FX: <span id="sfxVolumeValue">50</span>%</label>
+    <input type="range" id="sfxVolumeSlider" min="0" max="100" value="50">
   </div>
 
   <!-- Version Number -->
-  <div id="version">v0.2.1</div>
+  <div id="version">v0.3.0</div>
 
   <div id="game">
     <div id="ui">
-      <h1><img src="graphics/unicorn.png" alt="Unicorn" class="unicorn-link" onclick="window.open('https://happyunicornarmy.com', '_blank')">Rainbow Sokoban<a href="https://happyunicornarmy.com" target="_blank" class="site-link">happyunicornarmy.com</a></h1>
+      <h1><img src="graphics/unicorn.png" alt="Unicorn" class="unicorn-link" onclick="window.open('https://happyunicornarmy.com', '_blank')">Rainbow Push<a href="https://happyunicornarmy.com" target="_blank" class="site-link">happyunicornarmy.com</a></h1>
       <div id="levelInfo">Level <span id="levelNum">1</span>: <span id="levelName">Loading...</span></div>
       <div id="stats">
         Moves: <span id="moveCount">0</span> |
-        Optimal: <span id="optimalMoves">0</span>
+        Best: <span id="bestMoves">0</span>
       </div>
-      <div class="button-group">
+      <div class="button-group" id="mainButtons">
         <button id="resetBtn">🔄 Reset</button>
         <button id="prevBtn">← Previous</button>
         <button id="nextBtn">Next →</button>
@@ -530,11 +578,17 @@
     <div id="victory" style="display:none">
       <h2>✨ Level Complete! ✨</h2>
       <p id="victoryStats"></p>
-      <div class="button-group">
+      <div class="button-group" id="victoryMainButtons">
         <button id="victoryResetBtn">🔄 Retry</button>
         <button id="victoryNextBtn">Next Level →</button>
       </div>
-      <button id="victoryShareBtn" style="display:none; margin-top: 10px;">📤 Share Results</button>
+      <div class="button-group" id="shareButtonGroup" style="display:none; margin-top: 10px;">
+        <button id="victoryShareBtn">📤 Share Results</button>
+        <button id="copyLinkBtn">🔗 Share Link</button>
+      </div>
+      <div class="button-group" id="huaButtonGroup" style="display:none; margin-top: 10px;">
+        <button id="huaBtn" onclick="window.open('https://happyunicornarmy.com', '_blank')" style="background: linear-gradient(to right, #f44336, #ff9800, #ffc107, #4caf50, #2196f3, #9c27b0); color: white; border: none; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">🦄 Happy Unicorn Army</button>
+      </div>
     </div>
   </div>
 
@@ -593,6 +647,25 @@
         }
       });
 
+      // SFX volume slider
+      const sfxVolumeSlider = document.getElementById('sfxVolumeSlider');
+      const sfxVolumeValue = document.getElementById('sfxVolumeValue');
+      sfxVolumeSlider.value = Math.round(sfx.volume * 100);
+      sfxVolumeValue.textContent = Math.round(sfx.volume * 100);
+
+      sfxVolumeSlider.addEventListener('input', (e) => {
+        const vol = parseInt(e.target.value) / 100;
+        sfx.volume = vol;
+        sfxVolumeValue.textContent = e.target.value;
+        localStorage.setItem('sfxVolume', vol);
+
+        // Auto-unmute SFX if adjusting volume while muted
+        if (sfx.muted && vol > 0) {
+          sfx.muted = false;
+          localStorage.setItem('sfxMuted', 'false');
+        }
+      });
+
       // Right-click on mute button shows volume popup
       muteBtn.addEventListener('contextmenu', (e) => {
         e.preventDefault();
@@ -644,12 +717,18 @@
 
     // Toggle mute
     function toggleMute() {
-      music.muted = !music.muted;
-      music.audio.muted = music.muted;
-      localStorage.setItem('musicMuted', music.muted);
+      // Toggle both music and SFX
+      const newMuted = !music.muted;
+
+      music.muted = newMuted;
+      music.audio.muted = newMuted;
+      localStorage.setItem('musicMuted', newMuted);
+
+      sfx.muted = newMuted;
+      localStorage.setItem('sfxMuted', newMuted);
 
       const muteBtn = document.getElementById('muteBtn');
-      if (music.muted) {
+      if (newMuted) {
         muteBtn.textContent = '🔇';
         muteBtn.classList.add('muted');
       } else {
@@ -670,7 +749,8 @@
     const sfx = {
       audioContext: null,
       initialized: false,
-      volume: 0.5
+      muted: localStorage.getItem('sfxMuted') === 'true',
+      volume: parseFloat(localStorage.getItem('sfxVolume')) || 0.5
     };
 
     // Initialize Web Audio API context (must be called after user interaction)
@@ -679,8 +759,6 @@
       try {
         sfx.audioContext = new (window.AudioContext || window.webkitAudioContext)();
         sfx.initialized = true;
-        // Sync volume with music volume
-        sfx.volume = music.volume;
       } catch (e) {
         console.log('Web Audio API not supported:', e);
       }
@@ -688,7 +766,7 @@
 
     // Create an oscillator note
     function createNote(freq, startTime, duration, type = 'sine', gainValue = 0.3) {
-      if (!sfx.audioContext || music.muted) return;
+      if (!sfx.audioContext || sfx.muted) return;
 
       const oscillator = sfx.audioContext.createOscillator();
       const gainNode = sfx.audioContext.createGain();
@@ -858,9 +936,9 @@
       }
     }
 
-    // ===== SOKOBAN SOLVER =====
+    // ===== PUZZLE SOLVER =====
 
-    function solveSokoban(levelData) {
+    function solvePuzzle(levelData) {
       // BFS solver to find if level is solvable and optimal move count
       const { tiles, player, crystals, restorePoints } = levelData;
 
@@ -987,7 +1065,8 @@
       isMoving: false,
       isComplete: false,
       completedLevels: JSON.parse(localStorage.getItem('completedLevels') || '[]'),
-      levelStars: JSON.parse(localStorage.getItem('levelStars') || '{}')
+      levelStars: JSON.parse(localStorage.getItem('levelStars') || '{}'),
+      levelBestMoves: JSON.parse(localStorage.getItem('levelBestMoves') || '{}')
     };
 
     // ===== CORE FUNCTIONS =====
@@ -1013,7 +1092,7 @@
       // Reset victory screen customizations
       document.getElementById('victory').style.display = 'none';
       document.getElementById('victoryResetBtn').style.display = 'block';
-      document.getElementById('victoryShareBtn').style.display = 'none';
+      document.getElementById('shareButtonGroup').style.display = 'none';
       document.body.classList.remove('rainbow-victory');
 
       updateUI();
@@ -1074,18 +1153,28 @@
       }
     }
 
+    // Get the best moves for a level (minimum of defined optimal and user's personal best)
+    function getBestMoves(levelIndex) {
+      const definedOptimal = levels[levelIndex].optimalMoves;
+      const userBest = game.levelBestMoves[levelIndex];
+      if (userBest && userBest < definedOptimal) {
+        return userBest;
+      }
+      return definedOptimal;
+    }
+
     function updateUI() {
       document.getElementById('levelNum').textContent = game.level + 1;
       document.getElementById('levelName').textContent = levels[game.level].name;
       document.getElementById('moveCount').textContent = game.moves;
-      document.getElementById('optimalMoves').textContent = levels[game.level].optimalMoves;
+      document.getElementById('bestMoves').textContent = getBestMoves(game.level);
     }
 
     function updateButtons() {
       document.getElementById('prevBtn').disabled = game.level === 0;
-      // Can only go to next level if current or previous level is completed
+      // Can only go to next level if current level is completed
       const canGoNext = game.level < levels.length - 1 &&
-                        (game.completedLevels.includes(game.level) || game.level === 0);
+                        game.completedLevels.includes(game.level);
       document.getElementById('nextBtn').disabled = !canGoNext;
     }
 
@@ -1181,11 +1270,21 @@
     }
 
     function showVictory() {
-      const optimal = levels[game.level].optimalMoves;
+      const best = getBestMoves(game.level);
       let stars = 1;
-      const isOptimal = game.moves <= optimal;
-      if (isOptimal) stars = 3;
-      else if (game.moves <= optimal * 1.5) stars = 2;
+      let newRecord = false;
+
+      if (game.moves < best) {
+        stars = 4;  // Beat the best - new record!
+        newRecord = true;
+        // Save new best to localStorage
+        game.levelBestMoves[game.level] = game.moves;
+        localStorage.setItem('levelBestMoves', JSON.stringify(game.levelBestMoves));
+      } else if (game.moves === best) {
+        stars = 3;  // Tied the best
+      } else if (game.moves <= best * 1.5) {
+        stars = 2;
+      }
 
       markLevelComplete(stars);
 
@@ -1193,18 +1292,21 @@
 
       const isLastLevel = game.level === levels.length - 1;
 
-      // Extra celebration for optimal solution!
-      if (isOptimal && !isLastLevel) {
+      // Extra celebration for new record!
+      if (newRecord && !isLastLevel) {
+        createNewRecordCelebration();
+      } else if (stars >= 3 && !isLastLevel) {
         createOptimalCelebration();
       }
 
       // Special rainbow finale message
       if (isLastLevel) {
+        // Initial victory message
         document.getElementById('victoryStats').innerHTML = `
           <h2 style="font-size: 2.5em; margin: 15px 0;">🌈</h2>
           <strong style="font-size: 1.4em; background: linear-gradient(to right, #f44336, #ff9800, #ffc107, #4caf50, #2196f3, #3F51B5, #9c27b0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">RAINBOW VICTORY!</strong><br><br>
           <strong>Moves:</strong> ${game.moves}<br>
-          <strong>Optimal:</strong> ${optimal}<br>
+          <strong>Best:</strong> ${best}${newRecord ? ' ← NEW!' : ''}<br>
           <strong>Stars:</strong> ${starStr}<br><br>
           <em>You've mastered all the colors!</em>
         `;
@@ -1220,12 +1322,45 @@
         nextBtn.textContent = 'Happy Unicorn Army';
         nextBtn.onclick = () => window.open('https://happyunicornarmy.com', '_blank');
         nextBtn.disabled = false;
-        // Show share button on final level
-        document.getElementById('victoryShareBtn').style.display = 'block';
+        // Show share buttons on final level
+        document.getElementById('shareButtonGroup').style.display = 'flex';
+
+        // After 3 seconds, animate to full stats view
+        setTimeout(() => {
+          const totalStars = Object.values(game.levelStars).reduce((sum, s) => sum + s, 0);
+          const maxStars = levels.length * 3;
+
+          // Build the stats display as a two-column table
+          let levelRows = '';
+          levels.forEach((level, i) => {
+            const lvlStars = game.levelStars[i] || 0;
+            const baseStars = Math.min(lvlStars, 3);
+            const hasBonusStar = lvlStars === 4;
+            const earnedStars = '⭐'.repeat(baseStars);
+            const missedStars = '<span style="filter: grayscale(1); opacity: 0.4;">⭐</span>'.repeat(3 - baseStars);
+            const bonusStar = hasBonusStar ? '<span style="filter: hue-rotate(260deg);">⭐</span>' : '';
+            levelRows += `<tr><td style="text-align: right; padding-right: 8px;">${bonusStar}${earnedStars}${missedStars}</td><td style="text-align: left;">${level.name}</td></tr>`;
+          });
+
+          // Fade transition
+          const statsEl = document.getElementById('victoryStats');
+          statsEl.style.transition = 'opacity 0.5s';
+          statsEl.style.opacity = '0';
+
+          setTimeout(() => {
+            statsEl.innerHTML = `
+              <h2 style="font-size: 2.5em; margin: 15px 0;">🌈</h2>
+              <strong style="font-size: 1.4em; background: linear-gradient(to right, #f44336, #ff9800, #ffc107, #4caf50, #2196f3, #3F51B5, #9c27b0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">RAINBOW VICTORY!</strong><br><br>
+              <table style="margin: 0 auto; border-collapse: collapse;">${levelRows}</table><br>
+              <strong>✨ Total: ${totalStars}/${maxStars} stars</strong>
+            `;
+            statsEl.style.opacity = '1';
+          }, 500);
+        }, 3000);
       } else {
         document.getElementById('victoryStats').innerHTML = `
           <strong>Moves:</strong> ${game.moves}<br>
-          <strong>Optimal:</strong> ${optimal}<br>
+          <strong>Best:</strong> ${best}${newRecord ? ' ← NEW RECORD!' : ''}<br>
           <strong>Stars:</strong> ${starStr}
         `;
         // Play the level complete fanfare
@@ -1257,7 +1392,10 @@
 
       levels.forEach((level, i) => {
         const stars = game.levelStars[i] || 0;
-        const starEmojis = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+        const displayStars = Math.min(stars, 3);
+        const emptyStars = Math.max(0, 3 - stars);
+        const bonusStar = stars === 4 ? '💎' : '';
+        const starEmojis = '⭐'.repeat(displayStars) + '☆'.repeat(emptyStars) + bonusStar;
         // Clean level name (remove emojis for cleaner share text)
         const cleanName = level.name.replace(/🌈/g, '').trim();
         text += `${starEmojis} ${cleanName}\n`;
@@ -1296,6 +1434,152 @@
       } catch (err) {
         // Final fallback - show in a prompt
         prompt('Copy your results:', shareText);
+      }
+    }
+
+    // Obfuscation: encode stars as base36 with salt and checksum
+    function encodeStars(starsArray) {
+      // Convert stars to a number (base 5: 0-4 per level), add salt, then base36
+      const salt = 0x7B3F; // Magic number
+      let value = 0;
+      for (let i = 0; i < starsArray.length; i++) {
+        value = value * 5 + (starsArray[i] || 0);
+      }
+      // Add simple checksum (sum of stars mod 16)
+      const checksum = starsArray.reduce((a, b) => a + b, 0) % 16;
+      const encoded = ((value ^ salt) << 4) | checksum;
+      // Convert to base36 for shorter URL
+      return encoded.toString(36);
+    }
+
+    function decodeStars(encoded) {
+      try {
+        const salt = 0x7B3F;
+        const value = parseInt(encoded, 36);
+        const checksum = value & 0xF;
+        const data = (value >> 4) ^ salt;
+
+        // Extract stars (reverse base-5 encoding)
+        const stars = [];
+        let remaining = data;
+        for (let i = 0; i < levels.length; i++) {
+          stars.unshift(remaining % 5);
+          remaining = Math.floor(remaining / 5);
+        }
+
+        // Verify checksum
+        const actualChecksum = stars.reduce((a, b) => a + b, 0) % 16;
+        if (actualChecksum !== checksum) return null;
+
+        return stars;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function generateShareLink() {
+      const starsArray = levels.map((_, i) => game.levelStars[i] || 0);
+      const encoded = encodeStars(starsArray);
+      const baseUrl = 'https://happyunicornarmy.com/rainbow-quest';
+      return `${baseUrl}?s=${encoded}`;
+    }
+
+    function parseShareLink() {
+      const params = new URLSearchParams(window.location.search);
+      const encoded = params.get('s');
+      if (!encoded) return null;
+
+      const starsArray = decodeStars(encoded);
+      if (!starsArray) return null;
+
+      // Convert to object format
+      const stars = {};
+      starsArray.forEach((starCount, i) => {
+        if (starCount > 0 && starCount <= 4) {
+          stars[i] = starCount;
+        }
+      });
+      return stars;
+    }
+
+    function showSharedVictoryScreen(sharedStars) {
+      // Display a shared victory screen without overwriting local progress
+      const totalStars = Object.values(sharedStars).reduce((sum, s) => sum + s, 0);
+      const maxStars = levels.length * 3;  // 3 stars is target (4th is bonus)
+
+      // Build the stats display as a two-column table
+      let levelRows = '';
+      levels.forEach((level, i) => {
+        const stars = sharedStars[i] || 0;
+        // 3 stars is target, 4th is bonus (purple). Gray out missed up to 3.
+        const baseStars = Math.min(stars, 3);
+        const hasBonusStar = stars === 4;
+        const earnedStars = '⭐'.repeat(baseStars);
+        const missedStars = '<span style="filter: grayscale(1); opacity: 0.4;">⭐</span>'.repeat(3 - baseStars);
+        const bonusStar = hasBonusStar ? '<span style="filter: hue-rotate(260deg);">⭐</span>' : '';
+        levelRows += `<tr><td style="text-align: right; padding-right: 8px;">${bonusStar}${earnedStars}${missedStars}</td><td style="text-align: left;">${level.name}</td></tr>`;
+      });
+
+      document.getElementById('victoryStats').innerHTML = `
+        <h2 style="font-size: 2.5em; margin: 15px 0;">🌈</h2>
+        <strong style="font-size: 1.4em; background: linear-gradient(to right, #f44336, #ff9800, #ffc107, #4caf50, #2196f3, #3F51B5, #9c27b0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">RAINBOW VICTORY!</strong><br><br>
+        <table style="margin: 0 auto; border-collapse: collapse;">${levelRows}</table><br>
+        <strong>✨ Total: ${totalStars}/${maxStars} stars</strong><br><br>
+        <em>Shared results - play to set your own records!</em>
+      `;
+
+      // Activate rainbow effects
+      createRainbowCelebration();
+      playRainbowVictorySound();
+      document.body.classList.add('rainbow-victory');
+
+      // Hide retry button
+      document.getElementById('victoryResetBtn').style.display = 'none';
+
+      // Change next button to "Play Now"
+      const nextBtn = document.getElementById('victoryNextBtn');
+      nextBtn.textContent = 'Play Now!';
+      nextBtn.disabled = false;
+      nextBtn.onclick = () => {
+        // Clear the URL param and start game
+        window.history.replaceState({}, '', window.location.pathname);
+        const victoryEl = document.getElementById('victory');
+        victoryEl.style.display = 'none';
+        victoryEl.classList.remove('shared-view');
+        document.body.classList.remove('rainbow-victory');
+        document.getElementById('mobileControls').style.visibility = 'visible';
+        document.getElementById('levelInfo').style.visibility = 'visible';
+        document.getElementById('stats').style.visibility = 'visible';
+        document.getElementById('mainButtons').style.visibility = 'visible';
+        document.getElementById('huaButtonGroup').style.display = 'none';
+        loadLevel(0);
+      };
+
+      // Hide share buttons, show HUA button on shared view
+      document.getElementById('shareButtonGroup').style.display = 'none';
+      document.getElementById('huaButtonGroup').style.display = 'block';
+
+      // Hide UI elements on shared landing page (use visibility to preserve layout)
+      document.getElementById('mobileControls').style.visibility = 'hidden';
+      document.getElementById('levelInfo').style.visibility = 'hidden';
+      document.getElementById('stats').style.visibility = 'hidden';
+      document.getElementById('mainButtons').style.visibility = 'hidden';
+
+      const victoryEl = document.getElementById('victory');
+      victoryEl.classList.add('shared-view');
+      victoryEl.style.display = 'block';
+    }
+
+    async function copyShareLink() {
+      const link = generateShareLink();
+      try {
+        await navigator.clipboard.writeText(link);
+        const btn = document.getElementById('copyLinkBtn');
+        const originalText = btn.textContent;
+        btn.textContent = '✓ Copied!';
+        setTimeout(() => { btn.textContent = originalText; }, 2000);
+      } catch (err) {
+        prompt('Copy this link:', link);
       }
     }
 
@@ -1377,6 +1661,46 @@
       }
     }
 
+    function createNewRecordCelebration() {
+      // Diamond/platinum burst for new record - even more spectacular!
+      for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+          const x = Math.random() * window.innerWidth;
+          const y = Math.random() * window.innerHeight;
+          const size = Math.random() * 25 + 15;
+
+          const particle = document.createElement('div');
+          particle.style.position = 'fixed';
+          particle.style.left = x + 'px';
+          particle.style.top = y + 'px';
+          particle.style.width = size + 'px';
+          particle.style.height = size + 'px';
+          particle.style.borderRadius = '50%';
+          // Diamond/platinum gradient with sparkle
+          particle.style.background = 'radial-gradient(circle, #ffffff, #e0f7ff, #b0e0ff)';
+          particle.style.zIndex = '9999';
+          particle.style.pointerEvents = 'none';
+          particle.style.boxShadow = `0 0 ${size * 2}px #ffffff, 0 0 ${size * 3}px #b0e0ff`;
+
+          document.body.appendChild(particle);
+
+          const duration = Math.random() * 2000 + 1500;
+          const dy = Math.random() * 350 + 150;
+          const dx = (Math.random() - 0.5) * 200;
+
+          particle.animate([
+            { transform: 'translateY(0) translateX(0) scale(1) rotate(0deg)', opacity: 1 },
+            { transform: `translateY(${dy}px) translateX(${dx}px) scale(0.3) rotate(360deg)`, opacity: 0 }
+          ], {
+            duration: duration,
+            easing: 'ease-out'
+          });
+
+          setTimeout(() => particle.remove(), duration);
+        }, i * 25);
+      }
+    }
+
     // ===== EVENT LISTENERS =====
 
     document.addEventListener('keydown', (e) => {
@@ -1448,6 +1772,9 @@
     document.getElementById('victoryShareBtn').onclick = () => {
       shareResults();
     };
+    document.getElementById('copyLinkBtn').onclick = () => {
+      copyShareLink();
+    };
 
     // Mute button
     document.getElementById('muteBtn').onclick = () => {
@@ -1473,7 +1800,7 @@
     function verifyAllLevels() {
       console.log('🔍 Verifying all levels...');
       levels.forEach((level, index) => {
-        const result = solveSokoban({
+        const result = solvePuzzle({
           tiles: level.tiles,
           player: level.player,
           crystals: level.crystals,
@@ -1492,6 +1819,13 @@
     // ===== INITIALIZE =====
     initMusic();
     loadLevel(0);
+
+    // Check for shared victory link
+    const sharedStars = parseShareLink();
+    if (sharedStars && Object.keys(sharedStars).length > 0) {
+      // Small delay to let the page render first
+      setTimeout(() => showSharedVictoryScreen(sharedStars), 100);
+    }
 
     // Start music on any first interaction (click, touch, or keypress)
     function setupFirstInteraction() {

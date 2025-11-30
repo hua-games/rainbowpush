@@ -1,4 +1,4 @@
-# Unicorn Rainbow Sokoban 🦄 
+# Rainbow Push 🦄 
 
 ## A Game By Happy Unicorn Army
 

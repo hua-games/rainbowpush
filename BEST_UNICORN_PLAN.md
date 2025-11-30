@@ -511,7 +511,7 @@ button:hover {
 ❌ **No animations** - Movement is instant. Animations are polish, not gameplay.
 ❌ **No sounds** - Sound is ambiance, not core mechanics.
 ❌ **No touch controls** - Desktop keyboard first. Mobile can be added later easily.
-❌ **No powers system** - Start with pure Sokoban. Powers are complexity.
+❌ **No powers system** - Start with pure puzzle mechanics. Powers are complexity.
 ❌ **No save system** - Start fresh each session. localStorage can be added in 5 lines later.
 ❌ **No level editor** - Levels are hardcoded. JSON import is easy to add.
 ❌ **No scene management** - Everything on one screen. Simple state changes.

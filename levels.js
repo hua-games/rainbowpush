@@ -74,7 +74,7 @@ const levelDefinitions = [
   },
   {
     name: "The Five Points",
-    optimalMoves: 42,
+    optimalMoves: 40,
     hint: "Five colors shine!",
     grid: [
       "#######",
@@ -92,7 +92,7 @@ const levelDefinitions = [
   },
   {
     name: "Six Gems",
-    optimalMoves: 44,
+    optimalMoves: 79,
     hint: "Six gems to place!",
     grid: [
       "#######",
@@ -104,7 +104,7 @@ const levelDefinitions = [
       "#..o..#",
       "#.....#",
       "#..i..#",
-      "#G.B.Y#",
+      "#G.B.O#",
       "#######"
     ]
   },
