@@ -28,7 +28,6 @@
 
     html {
       min-width: 400px;
-      min-height: 900px;
     }
 
     @keyframes rainbowBackground {
@@ -49,7 +48,7 @@
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      min-height: max(100vh, 900px);
+      min-height: 100vh;
       min-width: 400px;
       color: white;
       padding: 10px 20px 20px 20px;
@@ -60,6 +59,13 @@
       animation: rainbowBackground 10s ease-in-out infinite;
     }
 
+    #gameWrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
     #game {
       text-align: center;
       max-width: 100%;
@@ -67,7 +73,7 @@
 
     #ui {
       background: rgba(0, 0, 0, 0.3);
-      padding: 5px 10px 15px 10px;
+      padding: 2px 10px 7px 10px;
       border-radius: 15px;
       margin-top: 5px;
       margin-bottom: 10px;
@@ -90,10 +96,10 @@
 
     h1 img {
       position: absolute;
-      left: 0;
+      left: -5px;
       top: 50%;
       transform: translateY(calc(-50% + 46px));
-      height: 3.15em;
+      height: 2.835em;
       -webkit-user-drag: none;
       user-drag: none;
     }
@@ -119,13 +125,13 @@
 
     #levelInfo {
       font-size: 1.1em;
-      margin: 22px 0 5px 0;
+      margin: 22px 0 2px 0;
       opacity: 0.9;
     }
 
     #stats {
       font-size: 1.3em;
-      margin: 8px 0;
+      margin: 5px 0;
       font-weight: bold;
     }
 
@@ -180,12 +186,6 @@
       justify-items: center;
     }
 
-    #game {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-height: calc(100vh - 200px);
-    }
 
     .tile {
       width: 45px;
@@ -438,24 +438,25 @@
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
 
+    /* Controls row - full width flex container */
+    #controlsRow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: calc(100% + 30px);
+      margin-left: -15px;
+      margin-right: -15px;
+      padding: 0 5px;
+      box-sizing: border-box;
+      margin-top: 15px;
+      margin-bottom: 10px;
+    }
+
     #mobileControls {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
       display: grid;
       grid-template-columns: repeat(3, 50px);
       grid-template-rows: repeat(3, 50px);
       gap: 6px;
-      z-index: 1000;
-    }
-
-    @media (max-height: 899px) {
-      #mobileControls {
-        position: static;
-        transform: none;
-        margin: 20px auto 20px auto;
-      }
     }
 
     .control-btn {
@@ -481,11 +482,10 @@
       grid-row: 2;
       width: 50px;
       height: 50px;
-      cursor: pointer;
-      transition: all 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
+      pointer-events: none;
     }
 
     .unicorn-center img {
@@ -495,10 +495,6 @@
       filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
       -webkit-user-drag: none;
       user-drag: none;
-    }
-
-    .unicorn-center:active {
-      transform: scale(0.95);
     }
 
     .unicorn-link {
@@ -524,6 +520,70 @@
       color: white;
       z-index: 500;
       pointer-events: none;
+    }
+
+    /* Reset button - frosted glass style above version */
+    #resetBtn {
+      position: fixed;
+      bottom: 35px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      color: white;
+      font-size: 24px;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      cursor: pointer;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      transition: all 0.2s;
+    }
+
+    #resetBtn:hover {
+      background: rgba(100, 100, 255, 0.6);
+      transform: scale(1.05);
+    }
+
+    #resetBtn:active {
+      background: rgba(100, 100, 255, 0.8);
+      transform: scale(0.95);
+    }
+
+    /* Previous/Next level navigation buttons */
+    .nav-btn {
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .nav-btn:hover {
+      background: rgba(100, 100, 255, 0.6);
+      transform: scale(1.05);
+    }
+
+    .nav-btn:active {
+      transform: scale(0.95);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.25;
+      cursor: default;
     }
 
     @media (max-width: 600px) {
@@ -553,8 +613,12 @@
   </div>
 
   <!-- Version Number -->
-  <div id="version">v0.3.2</div>
+  <div id="version">v0.3.3</div>
 
+  <!-- Reset button (fixed position) -->
+  <button id="resetBtn">⟳</button>
+
+  <div id="gameWrapper">
   <div id="game">
     <div id="ui">
       <h1><img src="graphics/unicorn.png" alt="Unicorn" class="unicorn-link" onclick="window.open('https://happyunicornarmy.com', '_blank')">Rainbow Push<a href="https://happyunicornarmy.com" target="_blank" class="site-link">happyunicornarmy.com</a></h1>
@@ -563,24 +627,8 @@
         Moves: <span id="moveCount">0</span> |
         Best: <span id="bestMoves">0</span>
       </div>
-      <div class="button-group" id="mainButtons">
-        <button id="resetBtn">🔄 Reset</button>
-        <button id="prevBtn">← Previous</button>
-        <button id="nextBtn">Next →</button>
-      </div>
     </div>
     <div id="grid"></div>
-
-    <!-- Mobile Controls -->
-    <div id="mobileControls">
-      <button class="control-btn up" data-dir="up">↑</button>
-      <button class="control-btn left" data-dir="left">←</button>
-      <div class="unicorn-center" onclick="window.open('https://happyunicornarmy.com', '_blank')">
-        <img src="graphics/unicorn.png" alt="Happy Unicorn Army">
-      </div>
-      <button class="control-btn down" data-dir="down">↓</button>
-      <button class="control-btn right" data-dir="right">→</button>
-    </div>
     <div id="victory" style="display:none">
       <h2>✨ Level Complete! ✨</h2>
       <p id="victoryStats"></p>
@@ -596,6 +644,22 @@
         <button id="huaBtn" onclick="window.open('https://happyunicornarmy.com', '_blank')" style="background: linear-gradient(to right, #f44336, #ff9800, #ffc107, #4caf50, #2196f3, #9c27b0); color: white; border: none; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">🦄 Happy Unicorn Army</button>
       </div>
     </div>
+  </div>
+
+  <!-- Controls row - PREV, D-pad, NEXT in one full-width row -->
+  <div id="controlsRow">
+    <button id="prevBtn" class="nav-btn">PREV</button>
+    <div id="mobileControls">
+      <button class="control-btn up" data-dir="up">↑</button>
+      <button class="control-btn left" data-dir="left">←</button>
+      <div class="unicorn-center">
+        <img src="graphics/unicorn.png" alt="Unicorn">
+      </div>
+      <button class="control-btn down" data-dir="down">↓</button>
+      <button class="control-btn right" data-dir="right">→</button>
+    </div>
+    <button id="nextBtn" class="nav-btn">NEXT</button>
+  </div>
   </div>
 
   <!-- Load levels from external file -->
@@ -1553,10 +1617,10 @@
         victoryEl.style.display = 'none';
         victoryEl.classList.remove('shared-view');
         document.body.classList.remove('rainbow-victory');
-        document.getElementById('mobileControls').style.visibility = 'visible';
+        document.getElementById('controlsRow').style.visibility = 'visible';
         document.getElementById('levelInfo').style.visibility = 'visible';
         document.getElementById('stats').style.visibility = 'visible';
-        document.getElementById('mainButtons').style.visibility = 'visible';
+        document.getElementById('resetBtn').style.visibility = 'visible';
         document.getElementById('huaButtonGroup').style.display = 'none';
         loadLevel(0);
       };
@@ -1566,10 +1630,10 @@
       document.getElementById('huaButtonGroup').style.display = 'block';
 
       // Hide UI elements on shared landing page (use visibility to preserve layout)
-      document.getElementById('mobileControls').style.visibility = 'hidden';
+      document.getElementById('controlsRow').style.visibility = 'hidden';
       document.getElementById('levelInfo').style.visibility = 'hidden';
       document.getElementById('stats').style.visibility = 'hidden';
-      document.getElementById('mainButtons').style.visibility = 'hidden';
+      document.getElementById('resetBtn').style.visibility = 'hidden';
 
       const victoryEl = document.getElementById('victory');
       victoryEl.classList.add('shared-view');
@@ -1838,6 +1902,7 @@
     }
 
     // ===== INITIALIZE =====
+
     initMusic();
     loadLevel(0);
 
@@ -1868,6 +1933,22 @@
       document.addEventListener('keydown', handler);
     }
     setupFirstInteraction();
+
+    // Auto-scroll to bottom when viewport is smaller than content
+    function adjustScroll() {
+      // Use document.scrollingElement for cross-browser compatibility
+      const scroller = document.scrollingElement || document.documentElement;
+      const scrollHeight = scroller.scrollHeight;
+      const clientHeight = scroller.clientHeight;
+      if (scrollHeight > clientHeight) {
+        scroller.scrollTop = scrollHeight - clientHeight;
+      } else {
+        scroller.scrollTop = 0;
+      }
+    }
+    window.addEventListener('resize', adjustScroll);
+    // Initial scroll adjustment after layout settles
+    setTimeout(adjustScroll, 100);
 
     // Verify levels in background (disabled - solver gives false negatives for complex levels)
     // setTimeout(verifyAllLevels, 1000);

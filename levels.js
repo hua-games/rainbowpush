@@ -12,7 +12,7 @@
 
 const levelDefinitions = [
   {
-    name: "First Push",
+    name: "One More Time",
     optimalMoves: 3,
     hint: "Push the red crystal down!",
     grid: [
@@ -27,7 +27,7 @@ const levelDefinitions = [
     ]
   },
   {
-    name: "Two Colors",
+    name: "Two To Tango",
     optimalMoves: 8,
     hint: "Two crystals, two colors!",
     grid: [
