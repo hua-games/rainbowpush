@@ -553,7 +553,7 @@
   </div>
 
   <!-- Version Number -->
-  <div id="version">v0.3.1</div>
+  <div id="version">v0.3.2</div>
 
   <div id="game">
     <div id="ui">
@@ -1408,7 +1408,7 @@
       });
 
       text += `\n✨ Total: ${totalStars}/${maxStars} stars\n`;
-      text += '\n🦄 https://happyunicornarmy.com/rainbow-quest';
+      text += '\n🦄 https://hua-games.github.io/rainbowpush';
 
       return text;
     }
@@ -1486,7 +1486,7 @@
     function generateShareLink() {
       const starsArray = levels.map((_, i) => game.levelStars[i] || 0);
       const encoded = encodeStars(starsArray);
-      const baseUrl = 'https://happyunicornarmy.com/rainbow-quest';
+      const baseUrl = 'https://hua-games.github.io/rainbowpush';
       return `${baseUrl}?s=${encoded}`;
     }
 
