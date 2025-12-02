@@ -3,22 +3,70 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rainbow Quest - Unicorn Puzzle Game</title>
+  <title>Rainbow Push - Unicorn Puzzle Game</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#667eea">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Guide your unicorn through 7 magical levels collecting rainbow crystals in this delightful puzzle game!">
+  <link rel="canonical" href="https://rainbowpush.happyunicornarmy.com">
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://hua-games.github.io/rainbowpush">
-  <meta property="og:title" content="Rainbow Quest - Unicorn Puzzle Game">
+  <meta property="og:url" content="https://rainbowpush.happyunicornarmy.com">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="Rainbow Push - Unicorn Puzzle Game">
   <meta property="og:description" content="Guide your unicorn through 7 magical levels collecting rainbow crystals in this delightful puzzle game!">
-  <meta property="og:image" content="screenshot.jpg">
+  <meta property="og:image" content="https://rainbowpush.happyunicornarmy.com/social-card.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Rainbow Push - a unicorn puzzle game with colorful crystals">
+  <meta property="og:site_name" content="Happy Unicorn Army">
 
   <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image">
-  <meta property="twitter:url" content="https://hua-games.github.io/rainbowpush">
-  <meta property="twitter:title" content="Rainbow Quest - Unicorn Puzzle Game">
-  <meta property="twitter:description" content="Guide your unicorn through 7 magical levels collecting rainbow crystals in this delightful puzzle game!">
-  <meta property="twitter:image" content="screenshot.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://rainbowpush.happyunicornarmy.com">
+  <meta name="twitter:title" content="Rainbow Push - Unicorn Puzzle Game">
+  <meta name="twitter:description" content="Guide your unicorn through 7 magical levels collecting rainbow crystals in this delightful puzzle game!">
+  <meta name="twitter:image" content="https://rainbowpush.happyunicornarmy.com/social-card.jpg">
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": "Rainbow Push",
+    "description": "Guide your unicorn through 7 magical levels collecting rainbow crystals in this delightful puzzle game!",
+    "url": "https://rainbowpush.happyunicornarmy.com",
+    "image": "https://rainbowpush.happyunicornarmy.com/social-card.jpg",
+    "genre": ["Puzzle", "Casual"],
+    "gamePlatform": "Web Browser",
+    "applicationCategory": "Game",
+    "operatingSystem": "Any",
+    "playMode": "SinglePlayer",
+    "inLanguage": "en",
+    "author": {
+      "@type": "Organization",
+      "name": "Happy Unicorn Army",
+      "url": "https://happyunicornarmy.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Happy Unicorn Army",
+      "url": "https://happyunicornarmy.com"
+    },
+    "screenshot": "https://rainbowpush.happyunicornarmy.com/social-card.jpg",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock"
+    }
+  }
+  </script>
+
   <style>
     * {
       margin: 0;
@@ -613,7 +661,7 @@
   </div>
 
   <!-- Version Number -->
-  <div id="version">v0.3.4</div>
+  <div id="version">v0.4.0</div>
 
   <!-- Reset button (fixed position) -->
   <button id="resetBtn">⟳</button>
@@ -1458,7 +1506,7 @@
       const totalStars = Object.values(game.levelStars).reduce((sum, s) => sum + s, 0);
       const maxStars = levels.length * 3;
 
-      let text = '🌈 Rainbow Quest Complete! 🦄\n\n';
+      let text = '🌈 Rainbow Push Complete! 🦄\n\n';
 
       levels.forEach((level, i) => {
         const stars = game.levelStars[i] || 0;
@@ -1472,7 +1520,7 @@
       });
 
       text += `\n✨ Total: ${totalStars}/${maxStars} stars\n`;
-      text += '\n🦄 https://hua-games.github.io/rainbowpush';
+      text += '\n🦄 https://rainbowpush.happyunicornarmy.com';
 
       return text;
     }
@@ -1484,7 +1532,7 @@
       if (navigator.share) {
         try {
           await navigator.share({
-            title: 'Rainbow Quest - My Results',
+            title: 'Rainbow Push - My Results',
             text: shareText
           });
           return;
@@ -1550,7 +1598,7 @@
     function generateShareLink() {
       const starsArray = levels.map((_, i) => game.levelStars[i] || 0);
       const encoded = encodeStars(starsArray);
-      const baseUrl = 'https://hua-games.github.io/rainbowpush';
+      const baseUrl = 'https://rainbowpush.happyunicornarmy.com';
       return `${baseUrl}?s=${encoded}`;
     }
 
