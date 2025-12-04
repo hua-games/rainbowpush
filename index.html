@@ -149,7 +149,6 @@
       transform: translateY(calc(-50% + 46px));
       height: 2.835em;
       -webkit-user-drag: none;
-      user-drag: none;
     }
 
     .site-link {
@@ -546,7 +545,6 @@
       object-fit: contain;
       filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
       -webkit-user-drag: none;
-      user-drag: none;
     }
 
     .unicorn-link {
@@ -669,7 +667,7 @@
   <div id="gameWrapper">
   <div id="game">
     <div id="ui">
-      <h1><img src="graphics/unicorn.png" alt="Unicorn" class="unicorn-link" onclick="window.open('https://happyunicornarmy.com', '_blank')">Rainbow Push<a href="https://happyunicornarmy.com" target="_blank" class="site-link">happyunicornarmy.com</a></h1>
+      <h1><img src="graphics/unicorn.png" alt="Unicorn" draggable="false" class="unicorn-link" onclick="window.open('https://happyunicornarmy.com', '_blank')">Rainbow Push<a href="https://happyunicornarmy.com" target="_blank" class="site-link">happyunicornarmy.com</a></h1>
       <div id="levelInfo">Level <span id="levelNum">1</span>: <span id="levelName">Loading...</span></div>
       <div id="stats">
         Moves: <span id="moveCount">0</span> |
@@ -702,7 +700,7 @@
         <button class="control-btn up" data-dir="up">↑</button>
         <button class="control-btn left" data-dir="left">←</button>
         <div class="unicorn-center">
-          <img src="graphics/unicorn.png" alt="Unicorn">
+          <img src="graphics/unicorn.png" alt="Unicorn" draggable="false">
         </div>
         <button class="control-btn down" data-dir="down">↓</button>
         <button class="control-btn right" data-dir="right">→</button>
